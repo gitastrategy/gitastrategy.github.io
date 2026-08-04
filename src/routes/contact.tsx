@@ -91,7 +91,7 @@ function ContactPage() {
           >
             <h2 className="text-2xl font-semibold">Send a message</h2>
 
-            <Field label="Name" error={errors.name}>
+            <Field label="Name" error={errors["name"]}>
               <input
                 value={form.name}
                 onChange={(e) => setForm({ ...form, name: e.target.value })}
@@ -101,7 +101,7 @@ function ContactPage() {
               />
             </Field>
 
-            <Field label="Email" error={errors.email}>
+            <Field label="Email" error={errors["email"]}>
               <input
                 type="email"
                 value={form.email}
@@ -112,7 +112,7 @@ function ContactPage() {
               />
             </Field>
 
-            <Field label="Message" error={errors.message}>
+            <Field label="Message" error={errors["message"]}>
               <textarea
                 value={form.message}
                 onChange={(e) => setForm({ ...form, message: e.target.value })}
@@ -199,7 +199,7 @@ function Field({
   children,
 }: {
   label: string;
-  error?: string;
+  error?: string | undefined;
   children: React.ReactNode;
 }) {
   return (

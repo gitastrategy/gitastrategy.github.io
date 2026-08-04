@@ -13,7 +13,9 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as BlogRouteImport } from './routes/blog'
 import { Route as CaseStudiesRouteImport } from './routes/case-studies'
+import { Route as ContactRouteImport } from './routes/contact'
 import { Route as LeadershipRouteImport } from './routes/leadership'
+import { Route as NewsletterRouteImport } from './routes/newsletter'
 import { Route as QuotesRouteImport } from './routes/quotes'
 import { Route as ToolkitRouteImport } from './routes/toolkit'
 import { Route as VersesRouteImport } from './routes/verses'
@@ -38,9 +40,19 @@ const CaseStudiesRoute = CaseStudiesRouteImport.update({
   path: '/case-studies',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ContactRoute = ContactRouteImport.update({
+  id: '/contact',
+  path: '/contact',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LeadershipRoute = LeadershipRouteImport.update({
   id: '/leadership',
   path: '/leadership',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NewsletterRoute = NewsletterRouteImport.update({
+  id: '/newsletter',
+  path: '/newsletter',
   getParentRoute: () => rootRouteImport,
 } as any)
 const QuotesRoute = QuotesRouteImport.update({
@@ -64,7 +76,9 @@ export interface FileRoutesByFullPath {
   '/about': typeof AboutRoute
   '/blog': typeof BlogRoute
   '/case-studies': typeof CaseStudiesRoute
+  '/contact': typeof ContactRoute
   '/leadership': typeof LeadershipRoute
+  '/newsletter': typeof NewsletterRoute
   '/quotes': typeof QuotesRoute
   '/toolkit': typeof ToolkitRoute
   '/verses': typeof VersesRoute
@@ -74,7 +88,9 @@ export interface FileRoutesByTo {
   '/about': typeof AboutRoute
   '/blog': typeof BlogRoute
   '/case-studies': typeof CaseStudiesRoute
+  '/contact': typeof ContactRoute
   '/leadership': typeof LeadershipRoute
+  '/newsletter': typeof NewsletterRoute
   '/quotes': typeof QuotesRoute
   '/toolkit': typeof ToolkitRoute
   '/verses': typeof VersesRoute
@@ -85,7 +101,9 @@ export interface FileRoutesById {
   '/about': typeof AboutRoute
   '/blog': typeof BlogRoute
   '/case-studies': typeof CaseStudiesRoute
+  '/contact': typeof ContactRoute
   '/leadership': typeof LeadershipRoute
+  '/newsletter': typeof NewsletterRoute
   '/quotes': typeof QuotesRoute
   '/toolkit': typeof ToolkitRoute
   '/verses': typeof VersesRoute
@@ -97,7 +115,9 @@ export interface FileRouteTypes {
     | '/about'
     | '/blog'
     | '/case-studies'
+    | '/contact'
     | '/leadership'
+    | '/newsletter'
     | '/quotes'
     | '/toolkit'
     | '/verses'
@@ -107,7 +127,9 @@ export interface FileRouteTypes {
     | '/about'
     | '/blog'
     | '/case-studies'
+    | '/contact'
     | '/leadership'
+    | '/newsletter'
     | '/quotes'
     | '/toolkit'
     | '/verses'
@@ -117,7 +139,9 @@ export interface FileRouteTypes {
     | '/about'
     | '/blog'
     | '/case-studies'
+    | '/contact'
     | '/leadership'
+    | '/newsletter'
     | '/quotes'
     | '/toolkit'
     | '/verses'
@@ -128,7 +152,9 @@ export interface RootRouteChildren {
   AboutRoute: typeof AboutRoute
   BlogRoute: typeof BlogRoute
   CaseStudiesRoute: typeof CaseStudiesRoute
+  ContactRoute: typeof ContactRoute
   LeadershipRoute: typeof LeadershipRoute
+  NewsletterRoute: typeof NewsletterRoute
   QuotesRoute: typeof QuotesRoute
   ToolkitRoute: typeof ToolkitRoute
   VersesRoute: typeof VersesRoute
@@ -164,11 +190,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CaseStudiesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/contact': {
+      id: '/contact'
+      path: '/contact'
+      fullPath: '/contact'
+      preLoaderRoute: typeof ContactRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/leadership': {
       id: '/leadership'
       path: '/leadership'
       fullPath: '/leadership'
       preLoaderRoute: typeof LeadershipRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/newsletter': {
+      id: '/newsletter'
+      path: '/newsletter'
+      fullPath: '/newsletter'
+      preLoaderRoute: typeof NewsletterRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/quotes': {
@@ -200,7 +240,9 @@ const rootRouteChildren: RootRouteChildren = {
   AboutRoute: AboutRoute,
   BlogRoute: BlogRoute,
   CaseStudiesRoute: CaseStudiesRoute,
+  ContactRoute: ContactRoute,
   LeadershipRoute: LeadershipRoute,
+  NewsletterRoute: NewsletterRoute,
   QuotesRoute: QuotesRoute,
   ToolkitRoute: ToolkitRoute,
   VersesRoute: VersesRoute,
