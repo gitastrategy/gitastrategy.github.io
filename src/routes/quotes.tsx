@@ -107,13 +107,12 @@ function QuotesPage() {
               <ChevronLeft className="h-4 w-4" aria-hidden="true" />
             </button>
 
-            <div className="flex gap-2" role="tablist" aria-label="Select quote">
+            <div className="flex gap-2" role="group" aria-label="Select quote">
               {quotes.map((item, idx) => (
                 <button
                   key={item.sanskrit}
                   type="button"
-                  role="tab"
-                  aria-selected={idx === index}
+                  aria-current={idx === index}
                   aria-label={`Quote ${idx + 1} of ${quotes.length}`}
                   onClick={() => setIndex(idx)}
                   className="grid h-11 w-6 place-items-center"
