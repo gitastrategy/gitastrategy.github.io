@@ -137,9 +137,9 @@ function Home() {
 
       <section className="mx-auto max-w-4xl px-5 py-20 text-center">
         <p className="eyebrow text-accent">Daily reflection</p>
-        <p className="sanskrit mt-6 text-2xl text-primary sm:text-3xl">{quotes[1].sanskrit}</p>
-        <p className="mt-4 text-lg">{quotes[1].translation}</p>
-        <p className="mt-3 text-sm text-muted-foreground">{quotes[1].insight}</p>
+        <p className="sanskrit mt-6 text-2xl text-primary sm:text-3xl">{quotes[1]!.sanskrit}</p>
+        <p className="mt-4 text-lg">{quotes[1]!.translation}</p>
+        <p className="mt-3 text-sm text-muted-foreground">{quotes[1]!.insight}</p>
         <Link
           to="/quotes"
           className="mt-8 inline-flex rounded-full border border-border px-5 py-2.5 text-sm font-medium"

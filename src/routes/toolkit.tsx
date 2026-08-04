@@ -26,7 +26,7 @@ export const Route = createFileRoute("/toolkit")({
 
 function ToolkitPage() {
   const [active, setActive] = useState(0);
-  const tool = toolkit[active];
+  const tool = toolkit[active]!;
 
   return (
     <>

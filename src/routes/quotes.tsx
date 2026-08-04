@@ -33,7 +33,7 @@ function QuotesPage() {
     return () => clearInterval(t);
   }, []);
 
-  const q = quotes[i];
+  const q = quotes[i]!;
 
   return (
     <>

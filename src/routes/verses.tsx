@@ -26,7 +26,7 @@ export const Route = createFileRoute("/verses")({
 });
 
 function VersesPage() {
-  const [open, setOpen] = useState<string | null>(verses[0].id);
+  const [open, setOpen] = useState<string | null>(verses[0]!.id);
 
   return (
     <>
