@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useRef, useState, type KeyboardEvent } from "react";
 import { PageHeader, Section } from "../components/site/PageHeader";
 import { toolkit } from "../data/gita";
 
@@ -26,7 +26,22 @@ export const Route = createFileRoute("/toolkit")({
 
 function ToolkitPage() {
   const [active, setActive] = useState(0);
+  const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const tool = toolkit[active]!;
+
+  function onKeyDown(e: KeyboardEvent<HTMLDivElement>) {
+    const keys = ["ArrowRight", "ArrowDown", "ArrowLeft", "ArrowUp", "Home", "End"];
+    if (!keys.includes(e.key)) return;
+    e.preventDefault();
+    const last = toolkit.length - 1;
+    let next = active;
+    if (e.key === "ArrowRight" || e.key === "ArrowDown") next = active === last ? 0 : active + 1;
+    if (e.key === "ArrowLeft" || e.key === "ArrowUp") next = active === 0 ? last : active - 1;
+    if (e.key === "Home") next = 0;
+    if (e.key === "End") next = last;
+    setActive(next);
+    tabRefs.current[next]?.focus();
+  }
 
   return (
     <>
@@ -37,29 +52,50 @@ function ToolkitPage() {
       />
       <Section>
         <div className="grid gap-8 lg:grid-cols-[280px_minmax(0,1fr)]">
-          <div className="flex gap-2 overflow-x-auto lg:flex-col lg:overflow-visible">
-            {toolkit.map((t, i) => (
-              <button
-                key={t.name}
-                type="button"
-                onClick={() => setActive(i)}
-                className={`shrink-0 rounded-lg border px-4 py-3 text-left text-sm font-medium transition-colors lg:w-full ${
-                  i === active
-                    ? "border-accent bg-accent/12 text-foreground"
-                    : "border-border bg-card text-muted-foreground hover:text-foreground"
-                }`}
-              >
-                {t.name}
-              </button>
-            ))}
+          <div
+            role="tablist"
+            aria-label="Strategy frameworks"
+            aria-orientation="vertical"
+            onKeyDown={onKeyDown}
+            className="flex gap-2 overflow-x-auto pb-1 lg:flex-col lg:overflow-visible lg:pb-0"
+          >
+            {toolkit.map((t, i) => {
+              const selected = i === active;
+              return (
+                <button
+                  key={t.name}
+                  ref={(el) => {
+                    tabRefs.current[i] = el;
+                  }}
+                  type="button"
+                  role="tab"
+                  id={`toolkit-tab-${i}`}
+                  aria-selected={selected}
+                  aria-controls="toolkit-panel"
+                  tabIndex={selected ? 0 : -1}
+                  onClick={() => setActive(i)}
+                  className={`min-h-11 shrink-0 rounded-lg border px-4 py-3 text-left text-sm font-medium transition-colors lg:w-full ${
+                    selected
+                      ? "border-accent bg-accent/12 text-foreground"
+                      : "border-border bg-card text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  {t.name}
+                </button>
+              );
+            })}
           </div>
 
           <article
             key={tool.name}
-            className="rise-in rounded-xl border border-border bg-card p-8 shadow-elegant"
+            id="toolkit-panel"
+            role="tabpanel"
+            aria-labelledby={`toolkit-tab-${active}`}
+            tabIndex={0}
+            className="rise-in rounded-xl border border-border bg-card p-6 shadow-elegant sm:p-8"
           >
             <p className="eyebrow text-accent">{tool.subtitle}</p>
-            <h2 className="mt-2 text-3xl font-semibold">{tool.name}</h2>
+            <h2 className="mt-2 text-2xl font-semibold sm:text-3xl">{tool.name}</h2>
             <p className="mt-4 text-sm leading-relaxed text-muted-foreground">{tool.body}</p>
             <ol className="mt-6 space-y-3">
               {tool.steps.map((s, i) => (

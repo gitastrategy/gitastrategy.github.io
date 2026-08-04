@@ -88,6 +88,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:site_name", content: "Gita Strategy" },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "theme-color", content: "#1b1f4b" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
@@ -98,6 +99,26 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         href: "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap",
       },
       { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
+    ],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Organization",
+          name: "Gita Strategy",
+          description:
+            "Bhagavad Gita verses mapped to modern strategic management: leadership, decision-making, ethics and execution.",
+          email: "info@gitastrategy.in",
+          telephone: "+91-8652074439",
+          address: {
+            "@type": "PostalAddress",
+            addressLocality: "Mumbai",
+            postalCode: "421204",
+            addressCountry: "IN",
+          },
+        }),
+      },
     ],
   }),
   shellComponent: RootShell,
@@ -127,7 +148,7 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       <div className="flex min-h-screen flex-col">
         <SiteHeader />
-        <main className="flex-1">
+        <main id="main-content" className="flex-1">
           {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
           <Outlet />
         </main>
