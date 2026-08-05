@@ -6,10 +6,27 @@
 // You can pass additional config via defineConfig({ vite: { ... }, etc... }) if needed.
 import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 
+const routes = [
+  "/",
+  "/verses",
+  "/leadership",
+  "/toolkit",
+  "/case-studies",
+  "/quotes",
+  "/blog",
+  "/about",
+  "/contact",
+  "/newsletter",
+];
+
 export default defineConfig({
   tanstackStart: {
     // Redirect TanStack Start's bundled server entry to src/server.ts (our SSR error wrapper).
     // nitro/vite builds from this
     server: { entry: "server" },
+    // Emit static HTML for every route so the build can be hosted on GitHub Pages.
+    prerender: { enabled: true, crawlLinks: true },
+    pages: routes.map((path) => ({ path, prerender: { enabled: true } })),
   },
 });
+
