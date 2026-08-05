@@ -24,68 +24,22 @@ bun run dev      # http://localhost:8080
 bun run build    # production build
 ```
 
-## Deploying to GitHub Pages (`github.com/gitastrategy`)
+## Deploying to GitHub Pages (`gitastrategy/gitastrategy.github.io`)
 
-The app has no runtime server dependency (all data is local, all form posts go to n8n webhooks), so it can be published as a static site.
+The repo now ships `.github/workflows/deploy.yml`, which prerenders all 10 routes to static HTML and publishes `dist/client`.
 
-1. **Base path.** If the site is served from a project subpath (`https://gitastrategy.github.io/<repo>/`), set the Vite base before building:
+If you currently see the README rendered at https://gitastrategy.github.io/, GitHub Pages is still serving the repo through Jekyll. Fix it in two steps:
 
-   ```ts
-   // vite.config.ts
-   export default defineConfig({
-     base: process.env.BASE_PATH ?? "/",
-     // …existing plugins
-   });
-   ```
+1. Push this repo (including `.github/workflows/deploy.yml`) to `main`.
+2. In **Settings → Pages → Build and deployment → Source**, choose **GitHub Actions** (not "Deploy from a branch"), then re-run the workflow.
 
-   Serving from a user/organization page (`https://gitastrategy.github.io/`) or a custom domain needs no change — keep `base: "/"`.
+Build details:
 
-2. **SPA fallback.** GitHub Pages has no server rewrite, so copy the built `index.html` to `404.html` in the publish step (included below) to make deep links such as `/verses` work on refresh.
+- `STATIC_EXPORT=1 bun run build` turns on prerendering and writes `dist/client/index.html`, `dist/client/verses/index.html`, etc.
+- `BASE_PATH` sets the Vite base. Keep `/` for `gitastrategy.github.io` or a custom domain; use `/<repo>/` for a project subpath.
+- The workflow copies `index.html` to `404.html` (deep-link fallback) and adds `.nojekyll` so Jekyll never touches the output.
+- Custom domain: add `public/CNAME` containing e.g. `gitastrategy.in` and keep `BASE_PATH=/`.
 
-3. **GitHub Actions workflow** — save as `.github/workflows/deploy.yml`:
-
-   ```yaml
-   name: Deploy to GitHub Pages
-   on:
-     push:
-       branches: [main]
-     workflow_dispatch:
-
-   permissions:
-     contents: read
-     pages: write
-     id-token: write
-
-   jobs:
-     build:
-       runs-on: ubuntu-latest
-       steps:
-         - uses: actions/checkout@v4
-         - uses: oven-sh/setup-bun@v2
-         - run: bun install --frozen-lockfile
-         - run: bun run build
-           env:
-             BASE_PATH: /${{ github.event.repository.name }}/
-         - name: Add SPA fallback
-           run: cp dist/client/index.html dist/client/404.html
-         - uses: actions/configure-pages@v5
-         - uses: actions/upload-pages-artifact@v3
-           with:
-             path: dist/client
-     deploy:
-       needs: build
-       runs-on: ubuntu-latest
-       environment:
-         name: github-pages
-         url: ${{ steps.deployment.outputs.page_url }}
-       steps:
-         - id: deployment
-           uses: actions/deploy-pages@v4
-   ```
-
-   Adjust `path:` if your build emits to a different client output directory, and set **Settings → Pages → Source** to *GitHub Actions*.
-
-4. **Custom domain.** Add a `public/CNAME` file containing e.g. `gitastrategy.in`, and keep `base: "/"`.
 
 ## Contact
 
