@@ -15,6 +15,7 @@ import { Route as BlogRouteImport } from './routes/blog'
 import { Route as CaseStudiesRouteImport } from './routes/case-studies'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as FeedbackRouteImport } from './routes/feedback'
+import { Route as KrishnaRouteImport } from './routes/krishna'
 import { Route as LeadershipRouteImport } from './routes/leadership'
 import { Route as NewsletterRouteImport } from './routes/newsletter'
 import { Route as QuotesRouteImport } from './routes/quotes'
@@ -53,6 +54,11 @@ const ContactRoute = ContactRouteImport.update({
 const FeedbackRoute = FeedbackRouteImport.update({
   id: '/feedback',
   path: '/feedback',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const KrishnaRoute = KrishnaRouteImport.update({
+  id: '/krishna',
+  path: '/krishna',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LeadershipRoute = LeadershipRouteImport.update({
@@ -108,6 +114,7 @@ export interface FileRoutesByFullPath {
   '/case-studies': typeof CaseStudiesRoute
   '/contact': typeof ContactRoute
   '/feedback': typeof FeedbackRoute
+  '/krishna': typeof KrishnaRoute
   '/leadership': typeof LeadershipRoute
   '/newsletter': typeof NewsletterRoute
   '/quotes': typeof QuotesRoute
@@ -125,6 +132,7 @@ export interface FileRoutesByTo {
   '/case-studies': typeof CaseStudiesRoute
   '/contact': typeof ContactRoute
   '/feedback': typeof FeedbackRoute
+  '/krishna': typeof KrishnaRoute
   '/leadership': typeof LeadershipRoute
   '/newsletter': typeof NewsletterRoute
   '/quotes': typeof QuotesRoute
@@ -143,6 +151,7 @@ export interface FileRoutesById {
   '/case-studies': typeof CaseStudiesRoute
   '/contact': typeof ContactRoute
   '/feedback': typeof FeedbackRoute
+  '/krishna': typeof KrishnaRoute
   '/leadership': typeof LeadershipRoute
   '/newsletter': typeof NewsletterRoute
   '/quotes': typeof QuotesRoute
@@ -162,6 +171,7 @@ export interface FileRouteTypes {
     | '/case-studies'
     | '/contact'
     | '/feedback'
+    | '/krishna'
     | '/leadership'
     | '/newsletter'
     | '/quotes'
@@ -179,6 +189,7 @@ export interface FileRouteTypes {
     | '/case-studies'
     | '/contact'
     | '/feedback'
+    | '/krishna'
     | '/leadership'
     | '/newsletter'
     | '/quotes'
@@ -196,6 +207,7 @@ export interface FileRouteTypes {
     | '/case-studies'
     | '/contact'
     | '/feedback'
+    | '/krishna'
     | '/leadership'
     | '/newsletter'
     | '/quotes'
@@ -214,6 +226,7 @@ export interface RootRouteChildren {
   CaseStudiesRoute: typeof CaseStudiesRoute
   ContactRoute: typeof ContactRoute
   FeedbackRoute: typeof FeedbackRoute
+  KrishnaRoute: typeof KrishnaRoute
   LeadershipRoute: typeof LeadershipRoute
   NewsletterRoute: typeof NewsletterRoute
   QuotesRoute: typeof QuotesRoute
@@ -267,6 +280,13 @@ declare module '@tanstack/react-router' {
       path: '/feedback'
       fullPath: '/feedback'
       preLoaderRoute: typeof FeedbackRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/krishna': {
+      id: '/krishna'
+      path: '/krishna'
+      fullPath: '/krishna'
+      preLoaderRoute: typeof KrishnaRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/leadership': {
@@ -342,6 +362,7 @@ const rootRouteChildren: RootRouteChildren = {
   CaseStudiesRoute: CaseStudiesRoute,
   ContactRoute: ContactRoute,
   FeedbackRoute: FeedbackRoute,
+  KrishnaRoute: KrishnaRoute,
   LeadershipRoute: LeadershipRoute,
   NewsletterRoute: NewsletterRoute,
   QuotesRoute: QuotesRoute,
