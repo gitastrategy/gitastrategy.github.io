@@ -7,10 +7,13 @@ const nav = [
   { to: "/leadership", label: "Leadership" },
   { to: "/toolkit", label: "Toolkit" },
   { to: "/case-studies", label: "Case Studies" },
+  { to: "/articles", label: "Articles" },
+  { to: "/krishna", label: "AI Krishna" },
   { to: "/quotes", label: "Quotes" },
   { to: "/blog", label: "Blog" },
   { to: "/about", label: "About" },
   { to: "/contact", label: "Contact" },
+  { to: "/feedback", label: "Feedback" },
 ] as const;
 
 export function SiteHeader() {
