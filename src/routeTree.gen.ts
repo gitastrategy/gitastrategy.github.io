@@ -21,6 +21,7 @@ import { Route as QuotesRouteImport } from './routes/quotes'
 import { Route as ToolkitRouteImport } from './routes/toolkit'
 import { Route as UnsubscribeRouteImport } from './routes/unsubscribe'
 import { Route as VersesRouteImport } from './routes/verses'
+import { Route as ApiKrishnaRouteImport } from './routes/api/krishna'
 import { Route as ArticlesIndexRouteImport } from './routes/articles.index'
 import { Route as ArticlesSlugRouteImport } from './routes/articles.$slug'
 
@@ -84,6 +85,11 @@ const VersesRoute = VersesRouteImport.update({
   path: '/verses',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiKrishnaRoute = ApiKrishnaRouteImport.update({
+  id: '/api/krishna',
+  path: '/api/krishna',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ArticlesIndexRoute = ArticlesIndexRouteImport.update({
   id: '/articles/',
   path: '/articles/',
@@ -108,6 +114,7 @@ export interface FileRoutesByFullPath {
   '/toolkit': typeof ToolkitRoute
   '/unsubscribe': typeof UnsubscribeRoute
   '/verses': typeof VersesRoute
+  '/api/krishna': typeof ApiKrishnaRoute
   '/articles/$slug': typeof ArticlesSlugRoute
   '/articles/': typeof ArticlesIndexRoute
 }
@@ -124,6 +131,7 @@ export interface FileRoutesByTo {
   '/toolkit': typeof ToolkitRoute
   '/unsubscribe': typeof UnsubscribeRoute
   '/verses': typeof VersesRoute
+  '/api/krishna': typeof ApiKrishnaRoute
   '/articles/$slug': typeof ArticlesSlugRoute
   '/articles': typeof ArticlesIndexRoute
 }
@@ -141,6 +149,7 @@ export interface FileRoutesById {
   '/toolkit': typeof ToolkitRoute
   '/unsubscribe': typeof UnsubscribeRoute
   '/verses': typeof VersesRoute
+  '/api/krishna': typeof ApiKrishnaRoute
   '/articles/$slug': typeof ArticlesSlugRoute
   '/articles/': typeof ArticlesIndexRoute
 }
@@ -159,6 +168,7 @@ export interface FileRouteTypes {
     | '/toolkit'
     | '/unsubscribe'
     | '/verses'
+    | '/api/krishna'
     | '/articles/$slug'
     | '/articles/'
   fileRoutesByTo: FileRoutesByTo
@@ -175,6 +185,7 @@ export interface FileRouteTypes {
     | '/toolkit'
     | '/unsubscribe'
     | '/verses'
+    | '/api/krishna'
     | '/articles/$slug'
     | '/articles'
   id:
@@ -191,6 +202,7 @@ export interface FileRouteTypes {
     | '/toolkit'
     | '/unsubscribe'
     | '/verses'
+    | '/api/krishna'
     | '/articles/$slug'
     | '/articles/'
   fileRoutesById: FileRoutesById
@@ -208,6 +220,7 @@ export interface RootRouteChildren {
   ToolkitRoute: typeof ToolkitRoute
   UnsubscribeRoute: typeof UnsubscribeRoute
   VersesRoute: typeof VersesRoute
+  ApiKrishnaRoute: typeof ApiKrishnaRoute
   ArticlesSlugRoute: typeof ArticlesSlugRoute
   ArticlesIndexRoute: typeof ArticlesIndexRoute
 }
@@ -298,6 +311,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof VersesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/krishna': {
+      id: '/api/krishna'
+      path: '/api/krishna'
+      fullPath: '/api/krishna'
+      preLoaderRoute: typeof ApiKrishnaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/articles/': {
       id: '/articles/'
       path: '/articles'
@@ -328,6 +348,7 @@ const rootRouteChildren: RootRouteChildren = {
   ToolkitRoute: ToolkitRoute,
   UnsubscribeRoute: UnsubscribeRoute,
   VersesRoute: VersesRoute,
+  ApiKrishnaRoute: ApiKrishnaRoute,
   ArticlesSlugRoute: ArticlesSlugRoute,
   ArticlesIndexRoute: ArticlesIndexRoute,
 }
