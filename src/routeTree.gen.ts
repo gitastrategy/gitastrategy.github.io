@@ -10,19 +10,31 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as R404RouteImport } from './routes/404'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as BlogRouteImport } from './routes/blog'
 import { Route as CaseStudiesRouteImport } from './routes/case-studies'
 import { Route as ContactRouteImport } from './routes/contact'
+import { Route as FeedbackRouteImport } from './routes/feedback'
+import { Route as KrishnaRouteImport } from './routes/krishna'
 import { Route as LeadershipRouteImport } from './routes/leadership'
 import { Route as NewsletterRouteImport } from './routes/newsletter'
 import { Route as QuotesRouteImport } from './routes/quotes'
 import { Route as ToolkitRouteImport } from './routes/toolkit'
+import { Route as UnsubscribeRouteImport } from './routes/unsubscribe'
 import { Route as VersesRouteImport } from './routes/verses'
+import { Route as ApiKrishnaRouteImport } from './routes/api/krishna'
+import { Route as ArticlesIndexRouteImport } from './routes/articles.index'
+import { Route as ArticlesSlugRouteImport } from './routes/articles.$slug'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const R404Route = R404RouteImport.update({
+  id: '/404',
+  path: '/404',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AboutRoute = AboutRouteImport.update({
@@ -45,6 +57,16 @@ const ContactRoute = ContactRouteImport.update({
   path: '/contact',
   getParentRoute: () => rootRouteImport,
 } as any)
+const FeedbackRoute = FeedbackRouteImport.update({
+  id: '/feedback',
+  path: '/feedback',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const KrishnaRoute = KrishnaRouteImport.update({
+  id: '/krishna',
+  path: '/krishna',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LeadershipRoute = LeadershipRouteImport.update({
   id: '/leadership',
   path: '/leadership',
@@ -65,99 +87,168 @@ const ToolkitRoute = ToolkitRouteImport.update({
   path: '/toolkit',
   getParentRoute: () => rootRouteImport,
 } as any)
+const UnsubscribeRoute = UnsubscribeRouteImport.update({
+  id: '/unsubscribe',
+  path: '/unsubscribe',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const VersesRoute = VersesRouteImport.update({
   id: '/verses',
   path: '/verses',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiKrishnaRoute = ApiKrishnaRouteImport.update({
+  id: '/api/krishna',
+  path: '/api/krishna',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ArticlesIndexRoute = ArticlesIndexRouteImport.update({
+  id: '/articles/',
+  path: '/articles/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ArticlesSlugRoute = ArticlesSlugRouteImport.update({
+  id: '/articles/$slug',
+  path: '/articles/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/404': typeof R404Route
   '/about': typeof AboutRoute
   '/blog': typeof BlogRoute
   '/case-studies': typeof CaseStudiesRoute
   '/contact': typeof ContactRoute
+  '/feedback': typeof FeedbackRoute
+  '/krishna': typeof KrishnaRoute
   '/leadership': typeof LeadershipRoute
   '/newsletter': typeof NewsletterRoute
   '/quotes': typeof QuotesRoute
   '/toolkit': typeof ToolkitRoute
+  '/unsubscribe': typeof UnsubscribeRoute
   '/verses': typeof VersesRoute
+  '/api/krishna': typeof ApiKrishnaRoute
+  '/articles/$slug': typeof ArticlesSlugRoute
+  '/articles/': typeof ArticlesIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/404': typeof R404Route
   '/about': typeof AboutRoute
   '/blog': typeof BlogRoute
   '/case-studies': typeof CaseStudiesRoute
   '/contact': typeof ContactRoute
+  '/feedback': typeof FeedbackRoute
+  '/krishna': typeof KrishnaRoute
   '/leadership': typeof LeadershipRoute
   '/newsletter': typeof NewsletterRoute
   '/quotes': typeof QuotesRoute
   '/toolkit': typeof ToolkitRoute
+  '/unsubscribe': typeof UnsubscribeRoute
   '/verses': typeof VersesRoute
+  '/api/krishna': typeof ApiKrishnaRoute
+  '/articles/$slug': typeof ArticlesSlugRoute
+  '/articles': typeof ArticlesIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/404': typeof R404Route
   '/about': typeof AboutRoute
   '/blog': typeof BlogRoute
   '/case-studies': typeof CaseStudiesRoute
   '/contact': typeof ContactRoute
+  '/feedback': typeof FeedbackRoute
+  '/krishna': typeof KrishnaRoute
   '/leadership': typeof LeadershipRoute
   '/newsletter': typeof NewsletterRoute
   '/quotes': typeof QuotesRoute
   '/toolkit': typeof ToolkitRoute
+  '/unsubscribe': typeof UnsubscribeRoute
   '/verses': typeof VersesRoute
+  '/api/krishna': typeof ApiKrishnaRoute
+  '/articles/$slug': typeof ArticlesSlugRoute
+  '/articles/': typeof ArticlesIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/404'
     | '/about'
     | '/blog'
     | '/case-studies'
     | '/contact'
+    | '/feedback'
+    | '/krishna'
     | '/leadership'
     | '/newsletter'
     | '/quotes'
     | '/toolkit'
+    | '/unsubscribe'
     | '/verses'
+    | '/api/krishna'
+    | '/articles/$slug'
+    | '/articles/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/404'
     | '/about'
     | '/blog'
     | '/case-studies'
     | '/contact'
+    | '/feedback'
+    | '/krishna'
     | '/leadership'
     | '/newsletter'
     | '/quotes'
     | '/toolkit'
+    | '/unsubscribe'
     | '/verses'
+    | '/api/krishna'
+    | '/articles/$slug'
+    | '/articles'
   id:
     | '__root__'
     | '/'
+    | '/404'
     | '/about'
     | '/blog'
     | '/case-studies'
     | '/contact'
+    | '/feedback'
+    | '/krishna'
     | '/leadership'
     | '/newsletter'
     | '/quotes'
     | '/toolkit'
+    | '/unsubscribe'
     | '/verses'
+    | '/api/krishna'
+    | '/articles/$slug'
+    | '/articles/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  R404Route: typeof R404Route
   AboutRoute: typeof AboutRoute
   BlogRoute: typeof BlogRoute
   CaseStudiesRoute: typeof CaseStudiesRoute
   ContactRoute: typeof ContactRoute
+  FeedbackRoute: typeof FeedbackRoute
+  KrishnaRoute: typeof KrishnaRoute
   LeadershipRoute: typeof LeadershipRoute
   NewsletterRoute: typeof NewsletterRoute
   QuotesRoute: typeof QuotesRoute
   ToolkitRoute: typeof ToolkitRoute
+  UnsubscribeRoute: typeof UnsubscribeRoute
   VersesRoute: typeof VersesRoute
+  ApiKrishnaRoute: typeof ApiKrishnaRoute
+  ArticlesSlugRoute: typeof ArticlesSlugRoute
+  ArticlesIndexRoute: typeof ArticlesIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -167,6 +258,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/404': {
+      id: '/404'
+      path: '/404'
+      fullPath: '/404'
+      preLoaderRoute: typeof R404RouteImport
       parentRoute: typeof rootRouteImport
     }
     '/about': {
@@ -197,6 +295,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ContactRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/feedback': {
+      id: '/feedback'
+      path: '/feedback'
+      fullPath: '/feedback'
+      preLoaderRoute: typeof FeedbackRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/krishna': {
+      id: '/krishna'
+      path: '/krishna'
+      fullPath: '/krishna'
+      preLoaderRoute: typeof KrishnaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/leadership': {
       id: '/leadership'
       path: '/leadership'
@@ -225,6 +337,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ToolkitRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/unsubscribe': {
+      id: '/unsubscribe'
+      path: '/unsubscribe'
+      fullPath: '/unsubscribe'
+      preLoaderRoute: typeof UnsubscribeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/verses': {
       id: '/verses'
       path: '/verses'
@@ -232,20 +351,48 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof VersesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/krishna': {
+      id: '/api/krishna'
+      path: '/api/krishna'
+      fullPath: '/api/krishna'
+      preLoaderRoute: typeof ApiKrishnaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/articles/': {
+      id: '/articles/'
+      path: '/articles'
+      fullPath: '/articles/'
+      preLoaderRoute: typeof ArticlesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/articles/$slug': {
+      id: '/articles/$slug'
+      path: '/articles/$slug'
+      fullPath: '/articles/$slug'
+      preLoaderRoute: typeof ArticlesSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  R404Route: R404Route,
   AboutRoute: AboutRoute,
   BlogRoute: BlogRoute,
   CaseStudiesRoute: CaseStudiesRoute,
   ContactRoute: ContactRoute,
+  FeedbackRoute: FeedbackRoute,
+  KrishnaRoute: KrishnaRoute,
   LeadershipRoute: LeadershipRoute,
   NewsletterRoute: NewsletterRoute,
   QuotesRoute: QuotesRoute,
   ToolkitRoute: ToolkitRoute,
+  UnsubscribeRoute: UnsubscribeRoute,
   VersesRoute: VersesRoute,
+  ApiKrishnaRoute: ApiKrishnaRoute,
+  ArticlesSlugRoute: ArticlesSlugRoute,
+  ArticlesIndexRoute: ArticlesIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
