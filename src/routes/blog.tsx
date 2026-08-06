@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { PageHeader, Section } from "../components/site/PageHeader";
 import { posts } from "../data/gita";
+import { Link } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/blog")({
   head: () => ({
@@ -32,6 +33,13 @@ function BlogPage() {
         intro="Essays for students, entrepreneurs and managers who want philosophy that survives contact with a P&L."
       />
       <Section>
+        <p className="mb-8 rounded-xl border border-border bg-card p-5 text-sm text-muted-foreground">
+          Looking for published pieces? The full{" "}
+          <Link to="/articles" className="font-semibold text-accent hover:underline">
+            LinkedIn article library
+          </Link>{" "}
+          is live with every article in full.
+        </p>
         <div className="grid gap-6 md:grid-cols-2">
           {posts.map((p) => (
             <article
