@@ -14,10 +14,12 @@ import { Route as AboutRouteImport } from './routes/about'
 import { Route as BlogRouteImport } from './routes/blog'
 import { Route as CaseStudiesRouteImport } from './routes/case-studies'
 import { Route as ContactRouteImport } from './routes/contact'
+import { Route as FeedbackRouteImport } from './routes/feedback'
 import { Route as LeadershipRouteImport } from './routes/leadership'
 import { Route as NewsletterRouteImport } from './routes/newsletter'
 import { Route as QuotesRouteImport } from './routes/quotes'
 import { Route as ToolkitRouteImport } from './routes/toolkit'
+import { Route as UnsubscribeRouteImport } from './routes/unsubscribe'
 import { Route as VersesRouteImport } from './routes/verses'
 
 const IndexRoute = IndexRouteImport.update({
@@ -45,6 +47,11 @@ const ContactRoute = ContactRouteImport.update({
   path: '/contact',
   getParentRoute: () => rootRouteImport,
 } as any)
+const FeedbackRoute = FeedbackRouteImport.update({
+  id: '/feedback',
+  path: '/feedback',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LeadershipRoute = LeadershipRouteImport.update({
   id: '/leadership',
   path: '/leadership',
@@ -65,6 +72,11 @@ const ToolkitRoute = ToolkitRouteImport.update({
   path: '/toolkit',
   getParentRoute: () => rootRouteImport,
 } as any)
+const UnsubscribeRoute = UnsubscribeRouteImport.update({
+  id: '/unsubscribe',
+  path: '/unsubscribe',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const VersesRoute = VersesRouteImport.update({
   id: '/verses',
   path: '/verses',
@@ -77,10 +89,12 @@ export interface FileRoutesByFullPath {
   '/blog': typeof BlogRoute
   '/case-studies': typeof CaseStudiesRoute
   '/contact': typeof ContactRoute
+  '/feedback': typeof FeedbackRoute
   '/leadership': typeof LeadershipRoute
   '/newsletter': typeof NewsletterRoute
   '/quotes': typeof QuotesRoute
   '/toolkit': typeof ToolkitRoute
+  '/unsubscribe': typeof UnsubscribeRoute
   '/verses': typeof VersesRoute
 }
 export interface FileRoutesByTo {
@@ -89,10 +103,12 @@ export interface FileRoutesByTo {
   '/blog': typeof BlogRoute
   '/case-studies': typeof CaseStudiesRoute
   '/contact': typeof ContactRoute
+  '/feedback': typeof FeedbackRoute
   '/leadership': typeof LeadershipRoute
   '/newsletter': typeof NewsletterRoute
   '/quotes': typeof QuotesRoute
   '/toolkit': typeof ToolkitRoute
+  '/unsubscribe': typeof UnsubscribeRoute
   '/verses': typeof VersesRoute
 }
 export interface FileRoutesById {
@@ -102,10 +118,12 @@ export interface FileRoutesById {
   '/blog': typeof BlogRoute
   '/case-studies': typeof CaseStudiesRoute
   '/contact': typeof ContactRoute
+  '/feedback': typeof FeedbackRoute
   '/leadership': typeof LeadershipRoute
   '/newsletter': typeof NewsletterRoute
   '/quotes': typeof QuotesRoute
   '/toolkit': typeof ToolkitRoute
+  '/unsubscribe': typeof UnsubscribeRoute
   '/verses': typeof VersesRoute
 }
 export interface FileRouteTypes {
@@ -116,10 +134,12 @@ export interface FileRouteTypes {
     | '/blog'
     | '/case-studies'
     | '/contact'
+    | '/feedback'
     | '/leadership'
     | '/newsletter'
     | '/quotes'
     | '/toolkit'
+    | '/unsubscribe'
     | '/verses'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -128,10 +148,12 @@ export interface FileRouteTypes {
     | '/blog'
     | '/case-studies'
     | '/contact'
+    | '/feedback'
     | '/leadership'
     | '/newsletter'
     | '/quotes'
     | '/toolkit'
+    | '/unsubscribe'
     | '/verses'
   id:
     | '__root__'
@@ -140,10 +162,12 @@ export interface FileRouteTypes {
     | '/blog'
     | '/case-studies'
     | '/contact'
+    | '/feedback'
     | '/leadership'
     | '/newsletter'
     | '/quotes'
     | '/toolkit'
+    | '/unsubscribe'
     | '/verses'
   fileRoutesById: FileRoutesById
 }
@@ -153,10 +177,12 @@ export interface RootRouteChildren {
   BlogRoute: typeof BlogRoute
   CaseStudiesRoute: typeof CaseStudiesRoute
   ContactRoute: typeof ContactRoute
+  FeedbackRoute: typeof FeedbackRoute
   LeadershipRoute: typeof LeadershipRoute
   NewsletterRoute: typeof NewsletterRoute
   QuotesRoute: typeof QuotesRoute
   ToolkitRoute: typeof ToolkitRoute
+  UnsubscribeRoute: typeof UnsubscribeRoute
   VersesRoute: typeof VersesRoute
 }
 
@@ -197,6 +223,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ContactRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/feedback': {
+      id: '/feedback'
+      path: '/feedback'
+      fullPath: '/feedback'
+      preLoaderRoute: typeof FeedbackRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/leadership': {
       id: '/leadership'
       path: '/leadership'
@@ -225,6 +258,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ToolkitRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/unsubscribe': {
+      id: '/unsubscribe'
+      path: '/unsubscribe'
+      fullPath: '/unsubscribe'
+      preLoaderRoute: typeof UnsubscribeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/verses': {
       id: '/verses'
       path: '/verses'
@@ -241,22 +281,14 @@ const rootRouteChildren: RootRouteChildren = {
   BlogRoute: BlogRoute,
   CaseStudiesRoute: CaseStudiesRoute,
   ContactRoute: ContactRoute,
+  FeedbackRoute: FeedbackRoute,
   LeadershipRoute: LeadershipRoute,
   NewsletterRoute: NewsletterRoute,
   QuotesRoute: QuotesRoute,
   ToolkitRoute: ToolkitRoute,
+  UnsubscribeRoute: UnsubscribeRoute,
   VersesRoute: VersesRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

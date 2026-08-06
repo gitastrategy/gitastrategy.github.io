@@ -9,7 +9,7 @@ import { seoUrls } from "../lib/site-url";
 const WEBHOOK = "https://yesorat.app.n8n.cloud/webhook/GitaStrategyNewsletter";
 const emailSchema = z.string().trim().email("Enter a valid email address").max(255);
 
-type Search = { email?: string };
+type Search = { email?: string | undefined };
 
 export const Route = createFileRoute("/unsubscribe")({
   // Supports the one-click link format: /unsubscribe?email=someone%40example.com
