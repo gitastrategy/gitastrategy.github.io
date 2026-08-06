@@ -154,7 +154,7 @@ function ArticlePage() {
           <div className="mt-12">
             <h2 className="font-display text-2xl font-semibold">Related reading</h2>
             <ul className="mt-4 space-y-3">
-              {related.map((r) => (
+              {related.map((r: LinkedInPost) => (
                 <li key={r.slug}>
                   <Link
                     to="/articles/$slug"
