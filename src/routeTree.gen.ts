@@ -21,6 +21,8 @@ import { Route as QuotesRouteImport } from './routes/quotes'
 import { Route as ToolkitRouteImport } from './routes/toolkit'
 import { Route as UnsubscribeRouteImport } from './routes/unsubscribe'
 import { Route as VersesRouteImport } from './routes/verses'
+import { Route as ArticlesIndexRouteImport } from './routes/articles.index'
+import { Route as ArticlesSlugRouteImport } from './routes/articles.$slug'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -82,6 +84,16 @@ const VersesRoute = VersesRouteImport.update({
   path: '/verses',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ArticlesIndexRoute = ArticlesIndexRouteImport.update({
+  id: '/articles/',
+  path: '/articles/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ArticlesSlugRoute = ArticlesSlugRouteImport.update({
+  id: '/articles/$slug',
+  path: '/articles/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -96,6 +108,8 @@ export interface FileRoutesByFullPath {
   '/toolkit': typeof ToolkitRoute
   '/unsubscribe': typeof UnsubscribeRoute
   '/verses': typeof VersesRoute
+  '/articles/$slug': typeof ArticlesSlugRoute
+  '/articles/': typeof ArticlesIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -110,6 +124,8 @@ export interface FileRoutesByTo {
   '/toolkit': typeof ToolkitRoute
   '/unsubscribe': typeof UnsubscribeRoute
   '/verses': typeof VersesRoute
+  '/articles/$slug': typeof ArticlesSlugRoute
+  '/articles': typeof ArticlesIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -125,6 +141,8 @@ export interface FileRoutesById {
   '/toolkit': typeof ToolkitRoute
   '/unsubscribe': typeof UnsubscribeRoute
   '/verses': typeof VersesRoute
+  '/articles/$slug': typeof ArticlesSlugRoute
+  '/articles/': typeof ArticlesIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -141,6 +159,8 @@ export interface FileRouteTypes {
     | '/toolkit'
     | '/unsubscribe'
     | '/verses'
+    | '/articles/$slug'
+    | '/articles/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -155,6 +175,8 @@ export interface FileRouteTypes {
     | '/toolkit'
     | '/unsubscribe'
     | '/verses'
+    | '/articles/$slug'
+    | '/articles'
   id:
     | '__root__'
     | '/'
@@ -169,6 +191,8 @@ export interface FileRouteTypes {
     | '/toolkit'
     | '/unsubscribe'
     | '/verses'
+    | '/articles/$slug'
+    | '/articles/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -184,6 +208,8 @@ export interface RootRouteChildren {
   ToolkitRoute: typeof ToolkitRoute
   UnsubscribeRoute: typeof UnsubscribeRoute
   VersesRoute: typeof VersesRoute
+  ArticlesSlugRoute: typeof ArticlesSlugRoute
+  ArticlesIndexRoute: typeof ArticlesIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -272,6 +298,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof VersesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/articles/': {
+      id: '/articles/'
+      path: '/articles'
+      fullPath: '/articles/'
+      preLoaderRoute: typeof ArticlesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/articles/$slug': {
+      id: '/articles/$slug'
+      path: '/articles/$slug'
+      fullPath: '/articles/$slug'
+      preLoaderRoute: typeof ArticlesSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -288,6 +328,8 @@ const rootRouteChildren: RootRouteChildren = {
   ToolkitRoute: ToolkitRoute,
   UnsubscribeRoute: UnsubscribeRoute,
   VersesRoute: VersesRoute,
+  ArticlesSlugRoute: ArticlesSlugRoute,
+  ArticlesIndexRoute: ArticlesIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

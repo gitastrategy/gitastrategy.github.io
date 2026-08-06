@@ -2,11 +2,16 @@ import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { ArrowLeft, ExternalLink } from "lucide-react";
 import { Section } from "../components/site/PageHeader";
 import { Markdown } from "../components/site/Markdown";
-import { findLinkedInPost, sortedLinkedInPosts } from "../data/linkedin-posts";
+import { findLinkedInPost, sortedLinkedInPosts, type LinkedInPost } from "../data/linkedin-posts";
 import { absoluteUrl } from "../lib/site-url";
 
 export const Route = createFileRoute("/articles/$slug")({
-  loader: ({ params }) => {
+  loader: ({ params }): {
+    post: LinkedInPost;
+    related: LinkedInPost[];
+    prev: LinkedInPost | undefined;
+    next: LinkedInPost | undefined;
+  } => {
     const post = findLinkedInPost(params.slug);
     if (!post) throw notFound();
     const all = sortedLinkedInPosts();
