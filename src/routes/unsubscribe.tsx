@@ -5,6 +5,7 @@ import { z } from "zod";
 import { PageHeader, Section } from "../components/site/PageHeader";
 import { sendWebhook, WebhookError } from "../lib/webhook";
 import { seoUrls } from "../lib/site-url";
+import { track } from "../lib/analytics";
 
 const WEBHOOK = "https://yesorat.app.n8n.cloud/webhook/GitaStrategyNewsletter";
 const emailSchema = z.string().trim().email("Enter a valid email address").max(255);
@@ -72,6 +73,7 @@ function UnsubscribePage() {
     try {
       await sendWebhook({ url, method: "GET", signal: controller.signal });
       setMessage(`${parsed.data} has been removed from the Gita Strategy newsletter.`);
+      track("newsletter_unsubscribed", { outcome: "success" });
       setState("done");
     } catch (error) {
       if (controller.signal.aborted && !(error instanceof WebhookError && error.kind === "timeout")) {
@@ -82,6 +84,7 @@ function UnsubscribePage() {
           ? `${error.message} Please try again in a moment.`
           : "Something went wrong. Please try again in a moment.",
       );
+      track("newsletter_unsubscribed", { outcome: "error" });
       setState("error");
     }
   }, []);
