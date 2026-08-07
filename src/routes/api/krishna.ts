@@ -34,25 +34,36 @@ function sanitize(messages: unknown): ChatMessage[] {
     .map((m) => ({ role: m.role, content: m.content.slice(0, 4000) }));
 }
 
+const CORS = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
+  "Access-Control-Allow-Headers": "Content-Type",
+  "Access-Control-Max-Age": "86400",
+};
+
+const json = (body: unknown, status: number) =>
+  Response.json(body, { status, headers: CORS });
+
 export const Route = createFileRoute("/api/krishna")({
   server: {
     handlers: {
+      OPTIONS: async () => new Response(null, { status: 204, headers: CORS }),
       POST: async ({ request }) => {
         let body: Body;
         try {
           body = (await request.json()) as Body;
         } catch {
-          return Response.json({ error: "Invalid JSON body." }, { status: 400 });
+          return json({ error: "Invalid JSON body." }, 400);
         }
 
         const messages = sanitize(body.messages);
         if (messages.length === 0) {
-          return Response.json({ error: "At least one message is required." }, { status: 400 });
+          return json({ error: "At least one message is required." }, 400);
         }
 
         const apiKey = process.env["LOVABLE_API_KEY"];
         if (!apiKey) {
-          return Response.json({ error: "The assistant is not configured." }, { status: 500 });
+          return json({ error: "The assistant is not configured." }, 500);
         }
 
         try {
@@ -62,24 +73,24 @@ export const Route = createFileRoute("/api/krishna")({
             system: SYSTEM_PROMPT,
             messages,
           });
-          return Response.json({ reply: result.text });
+          return json({ reply: result.text }, 200);
         } catch (error) {
           const status = (error as { statusCode?: number; status?: number }).statusCode ??
             (error as { status?: number }).status ?? 500;
           if (status === 429) {
-            return Response.json(
+            return json(
               { error: "Too many questions right now. Please pause a moment and try again." },
-              { status: 429 },
+              429,
             );
           }
           if (status === 402) {
-            return Response.json(
+            return json(
               { error: "The assistant has run out of credits. Please try again later." },
-              { status: 402 },
+              402,
             );
           }
           console.error("krishna assistant failed", error);
-          return Response.json({ error: "The assistant could not answer just now." }, { status: 500 });
+          return json({ error: "The assistant could not answer just now." }, 500);
         }
       },
     },

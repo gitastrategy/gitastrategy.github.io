@@ -30,12 +30,19 @@ const staticRoutes = [
 
 // Article detail pages come from the generated LinkedIn data file.
 function articleRoutes(): string[] {
-  try {
-    const source = readFileSync("src/data/linkedin-posts.ts", "utf8");
-    return [...source.matchAll(/"slug":\s*"([^"]+)"/g)].map((m) => `/articles/${m[1]}`);
-  } catch {
-    return [];
+  const slugs = new Set<string>();
+  for (const file of ["src/data/linkedin-posts.ts", "src/data/blog-posts.ts"]) {
+    try {
+      const source = readFileSync(file, "utf8");
+      for (const m of source.matchAll(/slug:\s*"([^"]+)"|"slug":\s*"([^"]+)"/g)) {
+        const slug = m[1] ?? m[2];
+        if (slug) slugs.add(slug);
+      }
+    } catch {
+      /* file may not exist yet */
+    }
   }
+  return [...slugs].map((slug) => `/articles/${slug}`);
 }
 
 const routes = staticExport ? [...staticRoutes, ...articleRoutes()] : staticRoutes;
