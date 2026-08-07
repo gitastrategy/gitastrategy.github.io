@@ -13,6 +13,8 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { SiteHeader, SiteFooter } from "../components/site/SiteChrome";
 import { Toaster } from "../components/ui/sonner";
+import { FeedbackModal } from "../components/site/FeedbackModal";
+import { ChatWidget } from "../components/site/ChatWidget";
 
 function NotFoundComponent() {
   return (
@@ -154,6 +156,8 @@ function RootComponent() {
         </main>
         <SiteFooter />
       </div>
+      <FeedbackModal />
+      <ChatWidget />
       <Toaster position="top-center" richColors />
     </QueryClientProvider>
   );
