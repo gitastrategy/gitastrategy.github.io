@@ -133,7 +133,7 @@ export function Chatbot({ compact = false }: { compact?: boolean }) {
         if (speakReplies) speak(data.reply);
         track("chat_reply_received", {});
       } catch (err) {
-        if (controller.signal.aborted && !timerFired(timer)) {
+        if (controller.signal.aborted) {
           setError("That took too long. Please try again.");
         } else {
           setError(err instanceof Error ? err.message : "Something went wrong. Please try again.");
@@ -362,12 +362,6 @@ export function Chatbot({ compact = false }: { compact?: boolean }) {
       </form>
     </div>
   );
-}
-
-/** Distinguishes an abort caused by our timeout from a user-cancelled request. */
-function timerFired(timer: ReturnType<typeof setTimeout>): boolean {
-  void timer;
-  return false;
 }
 
 function Bubble({
