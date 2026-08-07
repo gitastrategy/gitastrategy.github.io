@@ -14,12 +14,11 @@ const staticRoutes = [
   ["/", "1.0"],
   ["/verses", "0.9"],
   ["/articles", "0.9"],
-  ["/krishna", "0.8"],
+  ["/chat", "0.8"],
   ["/leadership", "0.8"],
   ["/toolkit", "0.8"],
   ["/case-studies", "0.8"],
   ["/quotes", "0.7"],
-  ["/blog", "0.7"],
   ["/about", "0.6"],
   ["/contact", "0.6"],
   ["/feedback", "0.6"],
@@ -27,10 +26,16 @@ const staticRoutes = [
 ];
 
 function articleSlugs() {
-  const file = "src/data/linkedin-posts.ts";
-  if (!existsSync(file)) return [];
-  const source = readFileSync(file, "utf8");
-  return [...source.matchAll(/"slug":\s*"([^"]+)"/g)].map((m) => m[1]);
+  const files = ["src/data/linkedin-posts.ts", "src/data/blog-posts.ts"];
+  const slugs = [];
+  for (const file of files) {
+    if (!existsSync(file)) continue;
+    const source = readFileSync(file, "utf8");
+    for (const m of source.matchAll(/slug:\s*"([^"]+)"|"slug":\s*"([^"]+)"/g)) {
+      slugs.push(m[1] || m[2]);
+    }
+  }
+  return [...new Set(slugs)];
 }
 
 const url = (path) => `${SITE_URL}${BASE}${path.replace(/^\/+/, "")}`;

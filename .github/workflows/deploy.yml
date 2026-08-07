@@ -82,7 +82,7 @@ jobs:
           # Give the CDN a moment to serve the new deployment.
           sleep 20
           fail=0
-          for path in "/" "/verses" "/articles" "/krishna" "/feedback" "/newsletter" "/unsubscribe"; do
+          for path in "/" "/verses" "/articles" "/chat" "/feedback" "/newsletter" "/unsubscribe"; do
             url="$BASE$path"
             code=$(curl -s -o /tmp/body.html -w "%{http_code}" -L "$url")
             if [ "$code" != "200" ]; then

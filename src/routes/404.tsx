@@ -18,7 +18,7 @@ const links = [
   { to: "/verses", label: "Verse → Strategy mappings" },
   { to: "/toolkit", label: "Strategy toolkit" },
   { to: "/articles", label: "Article library" },
-  { to: "/krishna", label: "AI Krishna assistant" },
+  { to: "/chat", label: "AI Chat assistant" },
   { to: "/case-studies", label: "Case studies" },
   { to: "/contact", label: "Contact us" },
 ] as const;

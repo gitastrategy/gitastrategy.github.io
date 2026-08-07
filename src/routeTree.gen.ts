@@ -12,11 +12,10 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as R404RouteImport } from './routes/404'
 import { Route as AboutRouteImport } from './routes/about'
-import { Route as BlogRouteImport } from './routes/blog'
 import { Route as CaseStudiesRouteImport } from './routes/case-studies'
+import { Route as ChatRouteImport } from './routes/chat'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as FeedbackRouteImport } from './routes/feedback'
-import { Route as KrishnaRouteImport } from './routes/krishna'
 import { Route as LeadershipRouteImport } from './routes/leadership'
 import { Route as NewsletterRouteImport } from './routes/newsletter'
 import { Route as QuotesRouteImport } from './routes/quotes'
@@ -42,14 +41,14 @@ const AboutRoute = AboutRouteImport.update({
   path: '/about',
   getParentRoute: () => rootRouteImport,
 } as any)
-const BlogRoute = BlogRouteImport.update({
-  id: '/blog',
-  path: '/blog',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const CaseStudiesRoute = CaseStudiesRouteImport.update({
   id: '/case-studies',
   path: '/case-studies',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ChatRoute = ChatRouteImport.update({
+  id: '/chat',
+  path: '/chat',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ContactRoute = ContactRouteImport.update({
@@ -60,11 +59,6 @@ const ContactRoute = ContactRouteImport.update({
 const FeedbackRoute = FeedbackRouteImport.update({
   id: '/feedback',
   path: '/feedback',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const KrishnaRoute = KrishnaRouteImport.update({
-  id: '/krishna',
-  path: '/krishna',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LeadershipRoute = LeadershipRouteImport.update({
@@ -117,11 +111,10 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/404': typeof R404Route
   '/about': typeof AboutRoute
-  '/blog': typeof BlogRoute
   '/case-studies': typeof CaseStudiesRoute
+  '/chat': typeof ChatRoute
   '/contact': typeof ContactRoute
   '/feedback': typeof FeedbackRoute
-  '/krishna': typeof KrishnaRoute
   '/leadership': typeof LeadershipRoute
   '/newsletter': typeof NewsletterRoute
   '/quotes': typeof QuotesRoute
@@ -136,11 +129,10 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/404': typeof R404Route
   '/about': typeof AboutRoute
-  '/blog': typeof BlogRoute
   '/case-studies': typeof CaseStudiesRoute
+  '/chat': typeof ChatRoute
   '/contact': typeof ContactRoute
   '/feedback': typeof FeedbackRoute
-  '/krishna': typeof KrishnaRoute
   '/leadership': typeof LeadershipRoute
   '/newsletter': typeof NewsletterRoute
   '/quotes': typeof QuotesRoute
@@ -156,11 +148,10 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/404': typeof R404Route
   '/about': typeof AboutRoute
-  '/blog': typeof BlogRoute
   '/case-studies': typeof CaseStudiesRoute
+  '/chat': typeof ChatRoute
   '/contact': typeof ContactRoute
   '/feedback': typeof FeedbackRoute
-  '/krishna': typeof KrishnaRoute
   '/leadership': typeof LeadershipRoute
   '/newsletter': typeof NewsletterRoute
   '/quotes': typeof QuotesRoute
@@ -177,11 +168,10 @@ export interface FileRouteTypes {
     | '/'
     | '/404'
     | '/about'
-    | '/blog'
     | '/case-studies'
+    | '/chat'
     | '/contact'
     | '/feedback'
-    | '/krishna'
     | '/leadership'
     | '/newsletter'
     | '/quotes'
@@ -196,11 +186,10 @@ export interface FileRouteTypes {
     | '/'
     | '/404'
     | '/about'
-    | '/blog'
     | '/case-studies'
+    | '/chat'
     | '/contact'
     | '/feedback'
-    | '/krishna'
     | '/leadership'
     | '/newsletter'
     | '/quotes'
@@ -215,11 +204,10 @@ export interface FileRouteTypes {
     | '/'
     | '/404'
     | '/about'
-    | '/blog'
     | '/case-studies'
+    | '/chat'
     | '/contact'
     | '/feedback'
-    | '/krishna'
     | '/leadership'
     | '/newsletter'
     | '/quotes'
@@ -235,11 +223,10 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   R404Route: typeof R404Route
   AboutRoute: typeof AboutRoute
-  BlogRoute: typeof BlogRoute
   CaseStudiesRoute: typeof CaseStudiesRoute
+  ChatRoute: typeof ChatRoute
   ContactRoute: typeof ContactRoute
   FeedbackRoute: typeof FeedbackRoute
-  KrishnaRoute: typeof KrishnaRoute
   LeadershipRoute: typeof LeadershipRoute
   NewsletterRoute: typeof NewsletterRoute
   QuotesRoute: typeof QuotesRoute
@@ -274,18 +261,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AboutRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/blog': {
-      id: '/blog'
-      path: '/blog'
-      fullPath: '/blog'
-      preLoaderRoute: typeof BlogRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/case-studies': {
       id: '/case-studies'
       path: '/case-studies'
       fullPath: '/case-studies'
       preLoaderRoute: typeof CaseStudiesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/chat': {
+      id: '/chat'
+      path: '/chat'
+      fullPath: '/chat'
+      preLoaderRoute: typeof ChatRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/contact': {
@@ -300,13 +287,6 @@ declare module '@tanstack/react-router' {
       path: '/feedback'
       fullPath: '/feedback'
       preLoaderRoute: typeof FeedbackRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/krishna': {
-      id: '/krishna'
-      path: '/krishna'
-      fullPath: '/krishna'
-      preLoaderRoute: typeof KrishnaRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/leadership': {
@@ -379,11 +359,10 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   R404Route: R404Route,
   AboutRoute: AboutRoute,
-  BlogRoute: BlogRoute,
   CaseStudiesRoute: CaseStudiesRoute,
+  ChatRoute: ChatRoute,
   ContactRoute: ContactRoute,
   FeedbackRoute: FeedbackRoute,
-  KrishnaRoute: KrishnaRoute,
   LeadershipRoute: LeadershipRoute,
   NewsletterRoute: NewsletterRoute,
   QuotesRoute: QuotesRoute,
@@ -397,13 +376,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

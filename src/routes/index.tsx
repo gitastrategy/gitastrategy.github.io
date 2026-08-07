@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { trackCta } from "../lib/analytics";
 import { ArrowRight, Compass, Scale, Sparkles } from "lucide-react";
 import heroImage from "../assets/hero-kurukshetra.jpg";
 import { verses, quotes } from "../data/gita";
@@ -75,12 +76,14 @@ function Home() {
           <div className="rise-in mt-10 flex flex-wrap justify-center gap-3">
             <Link
               to="/verses"
+              onClick={trackCta("Explore Verses", "home_hero")}
               className="inline-flex items-center gap-2 rounded-full bg-[image:var(--gradient-gold)] px-6 py-3 text-sm font-semibold text-[oklch(0.2_0.05_265)] shadow-aura"
             >
               Explore Verses <ArrowRight className="h-4 w-4" />
             </Link>
             <Link
               to="/toolkit"
+              onClick={trackCta("Learn Strategy Mapping", "home_hero")}
               className="inline-flex items-center gap-2 rounded-full border border-current/40 px-6 py-3 text-sm font-medium"
             >
               Learn Strategy Mapping

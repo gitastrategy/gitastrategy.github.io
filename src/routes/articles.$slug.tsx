@@ -2,19 +2,19 @@ import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { ArrowLeft, ExternalLink } from "lucide-react";
 import { Section } from "../components/site/PageHeader";
 import { Markdown } from "../components/site/Markdown";
-import { findLinkedInPost, sortedLinkedInPosts, type LinkedInPost } from "../data/linkedin-posts";
+import { allPosts, findPost, readingTime, type ContentPost } from "../data/content";
 import { absoluteUrl } from "../lib/site-url";
 
 export const Route = createFileRoute("/articles/$slug")({
   loader: ({ params }): {
-    post: LinkedInPost;
-    related: LinkedInPost[];
-    prev: LinkedInPost | undefined;
-    next: LinkedInPost | undefined;
+    post: ContentPost;
+    related: ContentPost[];
+    prev: ContentPost | undefined;
+    next: ContentPost | undefined;
   } => {
-    const post = findLinkedInPost(params.slug);
+    const post = findPost(params.slug);
     if (!post) throw notFound();
-    const all = sortedLinkedInPosts();
+    const all = allPosts();
     const index = all.findIndex((p) => p.slug === post.slug);
     return {
       post,
@@ -78,12 +78,12 @@ function ArticlePage() {
             to="/articles"
             className="inline-flex items-center gap-2 text-sm font-semibold text-[var(--gold)] hover:underline"
           >
-            <ArrowLeft className="h-4 w-4" aria-hidden="true" /> All articles
+            <ArrowLeft className="h-4 w-4" aria-hidden="true" /> All articles & blog
           </Link>
           <p className="eyebrow mt-6 text-[var(--gold)]">{post.trend || post.topic}</p>
           <h1 className="mt-3 text-3xl leading-tight font-semibold sm:text-4xl">{post.title}</h1>
           <p className="mt-4 text-sm opacity-80">
-            {post.date} · {post.category}
+            {post.date} · {post.kind === "blog" ? "Blog" : "Article"} · {readingTime(post)} · {post.category}
             {post.subCategory ? ` · ${post.subCategory}` : ""}
           </p>
         </div>
@@ -109,6 +109,7 @@ function ArticlePage() {
         <Markdown content={post.content} />
 
         <div className="mt-12 flex flex-wrap gap-3 border-t border-border pt-8">
+          {post.urn ? (
           <a
             href={linkedInUrl}
             target="_blank"
@@ -117,6 +118,7 @@ function ArticlePage() {
           >
             View on LinkedIn <ExternalLink className="h-4 w-4" aria-hidden="true" />
           </a>
+          ) : null}
           <Link
             to="/newsletter"
             className="inline-flex min-h-11 items-center rounded-full border border-border px-5 py-2.5 text-sm font-semibold"
@@ -154,7 +156,7 @@ function ArticlePage() {
           <div className="mt-12">
             <h2 className="font-display text-2xl font-semibold">Related reading</h2>
             <ul className="mt-4 space-y-3">
-              {related.map((r: LinkedInPost) => (
+              {related.map((r: ContentPost) => (
                 <li key={r.slug}>
                   <Link
                     to="/articles/$slug"
