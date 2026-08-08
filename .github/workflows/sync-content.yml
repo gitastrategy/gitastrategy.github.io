@@ -1,0 +1,40 @@
+name: Sync content from Google Sheets
+
+on:
+  schedule:
+    # Every day at 01:30 UTC.
+    - cron: "30 1 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: sync-content
+  cancel-in-progress: true
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Sync articles and verses
+        env:
+          ARTICLES_SHEET_ID: ${{ vars.ARTICLES_SHEET_ID }}
+          ARTICLES_GID: ${{ vars.ARTICLES_GID }}
+          VERSES_SHEET_ID: ${{ vars.VERSES_SHEET_ID }}
+          VERSES_GID: ${{ vars.VERSES_GID }}
+        run: node scripts/sync-content.mjs
+      - name: Commit changes (triggers the Pages deploy)
+        run: |
+          if [ -z "$(git status --porcelain src/data)" ]; then
+            echo "No content changes."; exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add src/data
+          git commit -m "chore: sync content from Google Sheets"
+          git push
