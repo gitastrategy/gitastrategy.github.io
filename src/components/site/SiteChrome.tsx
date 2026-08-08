@@ -8,12 +8,11 @@ const nav = [
   { to: "/toolkit", label: "Toolkit" },
   { to: "/case-studies", label: "Case Studies" },
   { to: "/articles", label: "Article/Blog" },
-  { to: "/chat", label: "AI Chat" },
   { to: "/quotes", label: "Quotes" },
   { to: "/about", label: "About" },
   { to: "/contact", label: "Contact" },
-  { to: "/feedback", label: "Feedback" },
 ] as const;
+
 
 export function SiteHeader() {
   const [open, setOpen] = useState(false);

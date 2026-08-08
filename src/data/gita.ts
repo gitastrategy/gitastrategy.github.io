@@ -1,3 +1,5 @@
+import { syncedVerses } from "./verses-generated";
+
 export type Verse = {
   id: string;
   ref: string;
@@ -9,7 +11,7 @@ export type Verse = {
   takeaway: string;
 };
 
-export const verses: Verse[] = [
+const builtInVerses: Verse[] = [
   {
     id: "arjuna-vishada",
     ref: "Chapter 1, Verse 29",
@@ -121,6 +123,9 @@ export const verses: Verse[] = [
       "Effort without craft is expensive. Design the system, then work it.",
   },
 ];
+
+/** Sheet-synced verses win when scripts/sync-content.mjs has populated them. */
+export const verses: Verse[] = syncedVerses.length > 0 ? syncedVerses : builtInVerses;
 
 export const leadershipLessons = [
   {
