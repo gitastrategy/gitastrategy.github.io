@@ -113,6 +113,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
             "Bhagavad Gita verses mapped to modern strategic management: leadership, decision-making, ethics and execution.",
           email: "info@gitastrategy.in",
           telephone: "+91-8652074439",
+          sameAs: [
+            "https://www.linkedin.com/in/gita-strategy-0895aa428/",
+            "https://x.com/GitaStrategy",
+            "https://www.facebook.com/profile.php?id=61593298430650",
+          ],
           address: {
             "@type": "PostalAddress",
             addressLocality: "Mumbai",

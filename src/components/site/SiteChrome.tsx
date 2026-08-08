@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { Menu, X, MessageCircle } from "lucide-react";
+import { SocialLinks } from "./SocialLinks";
 
 const nav = [
   { to: "/verses", label: "Verses" },
@@ -170,6 +171,7 @@ export function SiteFooter() {
           >
             <MessageCircle className="h-4 w-4" aria-hidden="true" /> WhatsApp us
           </a>
+          <SocialLinks className="mt-4" />
           <p className="mt-4 text-xs opacity-70">
             © {new Date().getFullYear()} Gita Strategy. All rights reserved.
           </p>

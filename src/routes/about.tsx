@@ -1,5 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { PageHeader, Section } from "../components/site/PageHeader";
+import { SocialLinks } from "../components/site/SocialLinks";
+import { profile } from "../data/profile";
 
 export const Route = createFileRoute("/about")({
   head: () => ({
@@ -46,6 +48,22 @@ function AboutPage() {
         intro="A study platform for people who refuse to choose between rigour and meaning."
       />
       <Section className="max-w-3xl">
+        <div className="mb-14 flex flex-col items-center gap-6 rounded-xl border border-border bg-card p-7 text-center sm:flex-row sm:items-start sm:text-left">
+          <img
+            src={profile.image}
+            alt="Gita Strategy logo"
+            width={80}
+            height={80}
+            className="h-20 w-20 shrink-0 rounded-full border border-border object-cover"
+          />
+          <div className="min-w-0">
+            <h2 className="font-display text-2xl font-semibold">{profile.name}</h2>
+            <p className="eyebrow mt-1 text-accent">{profile.tagline}</p>
+            <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{profile.bio}</p>
+            <SocialLinks className="mt-5 justify-center text-accent sm:justify-start" />
+          </div>
+        </div>
+
         <div className="space-y-12">
           {blocks.map((b) => (
             <div key={b.title}>
