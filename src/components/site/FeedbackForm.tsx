@@ -6,9 +6,9 @@ import { sendWebhook, WebhookError } from "../../lib/webhook";
 import { checkSubmission, honeypotProps, recordSubmission } from "../../lib/spam";
 import { track } from "../../lib/analytics";
 
-const WEBHOOK = "https://jawepah.app.n8n.cloud/webhook/feedback";
+const WEBHOOK = "https://kayoge6.app.n8n.cloud/webhook/feedback";
 export const HOSTED_FORM =
-  "https://jawepah.app.n8n.cloud/form/f7f83134-926f-4be1-8fcd-ed25877114ed";
+  "https://kayoge6.app.n8n.cloud/form/3758fb17-b23a-4263-9d39-937774107fc0";
 
 /** Seconds the success panel stays on screen before the form closes itself. */
 const AUTO_CLOSE_SECONDS = 4;
