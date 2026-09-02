@@ -2,7 +2,8 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { Search } from "lucide-react";
 import { PageHeader, Section } from "../components/site/PageHeader";
-import { allPosts, readingTime } from "../data/content";
+import { readingTime } from "../data/content";
+import { useLivePosts } from "../lib/live-content";
 import { seoUrls } from "../lib/site-url";
 
 export const Route = createFileRoute("/articles/")({
@@ -38,7 +39,7 @@ const TYPES = [
 ] as const;
 
 function ArticlesPage() {
-  const posts = useMemo(() => allPosts(), []);
+  const { posts, status } = useLivePosts();
   const categories = useMemo(
     () => ["All", ...Array.from(new Set(posts.map((p) => p.category).filter(Boolean))).sort()],
     [posts],
@@ -124,6 +125,8 @@ function ArticlesPage() {
 
         <p aria-live="polite" className="mt-4 text-sm text-muted-foreground">
           Showing {filtered.length} of {posts.length} pieces
+          {status === "loading" ? " · checking for new articles…" : null}
+          {status === "cached-fallback" ? " · showing the last synced copy" : null}
         </p>
 
         <div className="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
