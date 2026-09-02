@@ -7,7 +7,7 @@ export const WEBHOOKS = {
   /** Contact form — POST with a JSON body */
   contact: "https://rawaj.app.n8n.cloud/webhook/contact-us",
   /** Feedback form — POST with a JSON body */
-  feedback: "https://jawepah.app.n8n.cloud/webhook/feedback",
+  feedback: "https://kayoge6.app.n8n.cloud/webhook/feedback",
 } as const;
 
 export type NewsletterAction = "subscribe" | "unsubscribe";
