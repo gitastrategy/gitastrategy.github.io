@@ -5,8 +5,9 @@ import { toast } from "sonner";
 import { sendWebhook, WebhookError } from "../../lib/webhook";
 import { checkSubmission, honeypotProps, recordSubmission } from "../../lib/spam";
 import { track } from "../../lib/analytics";
+import { WEBHOOKS } from "../../lib/webhooks";
 
-const WEBHOOK = "https://kayoge6.app.n8n.cloud/webhook/feedback";
+const WEBHOOK = WEBHOOKS.feedback;
 export const HOSTED_FORM =
   "https://kayoge6.app.n8n.cloud/form/3758fb17-b23a-4263-9d39-937774107fc0";
 

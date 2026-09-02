@@ -5,6 +5,7 @@ import { z } from "zod";
 import { toast } from "sonner";
 import { PageHeader, Section } from "../components/site/PageHeader";
 import { sendWebhook, WebhookError } from "../lib/webhook";
+import { newsletterUrl } from "../lib/webhooks";
 
 export const Route = createFileRoute("/newsletter")({
   head: () => ({
@@ -27,7 +28,6 @@ export const Route = createFileRoute("/newsletter")({
   component: NewsletterPage,
 });
 
-const WEBHOOK = "https://yesorat.app.n8n.cloud/webhook/GitaStrategyNewsletter";
 const emailSchema = z.string().trim().email("Enter a valid email address").max(255);
 
 type Action = "subscribe" | "unsubscribe";
@@ -60,7 +60,7 @@ function NewsletterPage() {
     const controller = new AbortController();
     abortRef.current = controller;
 
-    const url = `${WEBHOOK}?email=${encodeURIComponent(parsed.data)}&action=${encodeURIComponent(action)}`;
+    const url = newsletterUrl(parsed.data, action);
 
     try {
       await sendWebhook({ url, method: "GET", signal: controller.signal });

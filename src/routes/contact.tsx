@@ -5,6 +5,7 @@ import { z } from "zod";
 import { toast } from "sonner";
 import { PageHeader, Section } from "../components/site/PageHeader";
 import { sendWebhook, WebhookError } from "../lib/webhook";
+import { WEBHOOKS } from "../lib/webhooks";
 
 export const Route = createFileRoute("/contact")({
   head: () => ({
@@ -27,7 +28,6 @@ export const Route = createFileRoute("/contact")({
   component: ContactPage,
 });
 
-const WEBHOOK = "https://yesorat.app.n8n.cloud/webhook/contact-us";
 
 const schema = z.object({
   name: z.string().trim().min(2, "Please enter your name").max(100),
@@ -100,7 +100,7 @@ function ContactPage() {
     abortRef.current = controller;
 
     try {
-      await sendWebhook({ url: WEBHOOK, method: "POST", body: parsed.data, signal: controller.signal });
+      await sendWebhook({ url: WEBHOOKS.contact, method: "POST", body: parsed.data, signal: controller.signal });
       setStatus("success");
       setForm({ name: "", email: "", message: "" });
       toast.success("Message sent", { description: "We'll get back to you shortly." });
