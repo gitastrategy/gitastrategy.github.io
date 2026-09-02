@@ -11,8 +11,8 @@
 
 | Form | Method | Endpoint |
 | --- | --- | --- |
-| Contact | POST (JSON: `name`, `email`, `message`) | `https://yesorat.app.n8n.cloud/webhook/contact-us` |
-| Newsletter | GET (`?email=…&action=subscribe\|unsubscribe`) | `https://yesorat.app.n8n.cloud/webhook/GitaStrategyNewsletter` |
+| Contact | POST (JSON: `name`, `email`, `message`) | `https://rawaj.app.n8n.cloud/webhook/contact-us` |
+| Newsletter | GET (`?email=…&action=subscribe\|unsubscribe`) | `https://rawaj.app.n8n.cloud/webhook/GitaStrategyNewsletter` |
 
 Both are called directly from the browser — no server credentials required, so the build stays fully static-friendly.
 

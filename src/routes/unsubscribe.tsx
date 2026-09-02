@@ -68,7 +68,7 @@ function UnsubscribePage() {
     const controller = new AbortController();
     abortRef.current = controller;
 
-    const url = `${WEBHOOK}?email=${encodeURIComponent(parsed.data)}&action=unsubscribe`;
+    const url = newsletterUrl(parsed.data, "unsubscribe");
 
     try {
       await sendWebhook({ url, method: "GET", signal: controller.signal });
