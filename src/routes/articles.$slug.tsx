@@ -1,22 +1,26 @@
-import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { ArrowLeft, ExternalLink } from "lucide-react";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
+import { ArrowLeft, ExternalLink, Loader2 } from "lucide-react";
 import { Section } from "../components/site/PageHeader";
 import { Markdown } from "../components/site/Markdown";
 import { allPosts, findPost, readingTime, type ContentPost } from "../data/content";
 import { absoluteUrl } from "../lib/site-url";
+import { fetchLivePosts, mergePosts } from "../lib/live-content";
 
 export const Route = createFileRoute("/articles/$slug")({
   loader: ({ params }): {
-    post: ContentPost;
+    slug: string;
+    post: ContentPost | null;
     related: ContentPost[];
     prev: ContentPost | undefined;
     next: ContentPost | undefined;
   } => {
     const post = findPost(params.slug);
-    if (!post) throw notFound();
+    if (!post) return { slug: params.slug, post: null, related: [], prev: undefined, next: undefined };
     const all = allPosts();
     const index = all.findIndex((p) => p.slug === post.slug);
     return {
+      slug: params.slug,
       post,
       related: all.filter((p) => p.slug !== post.slug && p.category === post.category).slice(0, 3),
       prev: index > 0 ? all[index - 1] : undefined,
@@ -65,7 +69,71 @@ export const Route = createFileRoute("/articles/$slug")({
 });
 
 function ArticlePage() {
-  const { post, related, prev, next } = Route.useLoaderData();
+  const data = Route.useLoaderData();
+  const live = useLiveFallback(data.slug, data.post);
+  if (!data.post) return live;
+  return <ArticleBody post={data.post} related={data.related} prev={data.prev} next={data.next} />;
+}
+
+/**
+ * Articles published to the Google Sheet after the last build have no
+ * prerendered payload. Fetch the sheet in the browser and render them anyway.
+ */
+function useLiveFallback(slug: string, existing: ContentPost | null) {
+  const [state, setState] = useState<"loading" | "missing">("loading");
+  const [found, setFound] = useState<ContentPost | null>(null);
+
+  useEffect(() => {
+    if (existing) return;
+    let cancelled = false;
+    fetchLivePosts()
+      .then((livePosts) => {
+        if (cancelled) return;
+        const match = mergePosts(livePosts).find((p) => p.slug === slug) ?? null;
+        setFound(match);
+        if (!match) setState("missing");
+      })
+      .catch(() => !cancelled && setState("missing"));
+    return () => {
+      cancelled = true;
+    };
+  }, [slug, existing]);
+
+  if (existing) return null;
+  if (found) return <ArticleBody post={found} related={[]} prev={undefined} next={undefined} />;
+  return (
+    <Section className="max-w-3xl">
+      {state === "loading" ? (
+        <p className="flex items-center gap-2 py-20 text-sm text-muted-foreground">
+          <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" /> Loading the latest
+          articles…
+        </p>
+      ) : (
+        <div className="py-20 text-center">
+          <h1 className="font-display text-3xl font-semibold">Article not found</h1>
+          <p className="mt-3 text-sm text-muted-foreground">
+            This piece may have been renamed or removed.
+          </p>
+          <Link to="/articles" className="mt-6 inline-block text-sm font-semibold text-accent hover:underline">
+            Back to all articles & blog
+          </Link>
+        </div>
+      )}
+    </Section>
+  );
+}
+
+function ArticleBody({
+  post,
+  related,
+  prev,
+  next,
+}: {
+  post: ContentPost;
+  related: ContentPost[];
+  prev: ContentPost | undefined;
+  next: ContentPost | undefined;
+}) {
   const linkedInUrl = post.urn
     ? `https://www.linkedin.com/feed/update/${post.urn}/`
     : "https://www.linkedin.com/";

@@ -5,9 +5,9 @@ import { z } from "zod";
 import { PageHeader, Section } from "../components/site/PageHeader";
 import { sendWebhook, WebhookError } from "../lib/webhook";
 import { seoUrls } from "../lib/site-url";
+import { newsletterUrl } from "../lib/webhooks";
 import { track } from "../lib/analytics";
 
-const WEBHOOK = "https://yesorat.app.n8n.cloud/webhook/GitaStrategyNewsletter";
 const emailSchema = z.string().trim().email("Enter a valid email address").max(255);
 
 type Search = { email?: string | undefined };
@@ -68,7 +68,7 @@ function UnsubscribePage() {
     const controller = new AbortController();
     abortRef.current = controller;
 
-    const url = `${WEBHOOK}?email=${encodeURIComponent(parsed.data)}&action=unsubscribe`;
+    const url = newsletterUrl(parsed.data, "unsubscribe");
 
     try {
       await sendWebhook({ url, method: "GET", signal: controller.signal });
