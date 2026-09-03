@@ -80,30 +80,14 @@ export function Chatbot({ compact = false }: { compact?: boolean }) {
     });
   }, [messages, busy]);
 
-  useEffect(
-    () => () => {
-      abortRef.current?.abort();
-      recognitionRef.current?.abort();
-      if (typeof window !== "undefined" && window.speechSynthesis) window.speechSynthesis.cancel();
-    },
-    [],
-  );
-
-  const speak = useCallback((text: string) => {
-    if (typeof window === "undefined" || !window.speechSynthesis) return;
-    window.speechSynthesis.cancel();
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.rate = 0.98;
-    utterance.pitch = 0.9;
-    utterance.lang = "en-IN";
-    window.speechSynthesis.speak(utterance);
-  }, []);
+  useEffect(() => () => abortRef.current?.abort(), []);
 
   const send = useCallback(
     async (text: string, opts: { retryOf?: string } = {}) => {
       const question = text.trim();
       if (!question || busy) return;
       lastQuestionRef.current = question;
+      const voice = voiceRef.current;
 
       const history = [
         ...messages.map((m) => ({ role: m.role, content: m.content })),
@@ -114,6 +98,7 @@ export function Chatbot({ compact = false }: { compact?: boolean }) {
       setInput("");
       setError(null);
       setBusy(true);
+      voice?.processing();
       track("chat_message_sent", { retry: Boolean(opts.retryOf) });
 
       abortRef.current?.abort();
@@ -138,8 +123,10 @@ export function Chatbot({ compact = false }: { compact?: boolean }) {
           throw new Error(data.error ?? "The assistant could not answer just now.");
         }
 
+        // One reply → one message, spoken at most once.
         setMessages((m) => [...m, newMessage("assistant", data.reply as string)]);
-        if (speakReplies) speak(data.reply);
+        if (speakReplies) voice?.speak(data.reply);
+        else voice?.finishTurn();
         track("chat_reply_received", {});
       } catch (err) {
         if (controller.signal.aborted) {
@@ -147,6 +134,7 @@ export function Chatbot({ compact = false }: { compact?: boolean }) {
         } else {
           setError(err instanceof Error ? err.message : "Something went wrong. Please try again.");
         }
+        voice?.fail();
         track("chat_error", {});
       } finally {
         clearTimeout(timer);
@@ -154,38 +142,42 @@ export function Chatbot({ compact = false }: { compact?: boolean }) {
         inputRef.current?.focus();
       }
     },
-    [busy, messages, speak, speakReplies],
+    [busy, messages, speakReplies],
   );
 
-  function toggleListening() {
-    if (listening) {
-      recognitionRef.current?.stop();
+  // Keeps the voice manager's callback pointing at the current send().
+  useEffect(() => {
+    sendRef.current = (text: string) => void send(text);
+  }, [send]);
+
+  /** Single control for the whole voice flow, per conversation phase. */
+  function onMicPress() {
+    const voice = voiceRef.current;
+    if (!voice) return;
+    setError(null);
+    if (phase === "listening") {
+      voice.finishListening();
       return;
     }
-    const w = window as unknown as Record<string, unknown>;
-    const Ctor = (w["SpeechRecognition"] ?? w["webkitSpeechRecognition"]) as
-      | (new () => Recognition)
-      | undefined;
-    if (!Ctor) return;
+    if (phase === "speaking") {
+      // Barge-in: stop the assistant and capture the user straight away.
+      voice.interrupt();
+      track("chat_voice_bargein", {});
+      return;
+    }
+    if (phase === "processing") return;
+    void voice.listen({ handsFree });
+    track("chat_voice_started", { handsFree });
+  }
 
-    const recognition = new Ctor();
-    recognition.lang = "en-IN";
-    recognition.continuous = false;
-    recognition.interimResults = true;
-    recognition.onresult = (event) => {
-      let text = "";
-      for (let i = event.resultIndex; i < event.results.length; i++) {
-        const result = event.results[i];
-        if (result) text += result[0].transcript;
-      }
-      setInput(text);
-    };
-    recognition.onerror = () => setListening(false);
-    recognition.onend = () => setListening(false);
-    recognitionRef.current = recognition;
-    recognition.start();
-    setListening(true);
-    track("chat_voice_started", {});
+  function toggleHandsFree() {
+    const next = !handsFree;
+    setHandsFree(next);
+    if (!next) voiceRef.current?.stop();
+    else {
+      setSpeakReplies(true);
+      void voiceRef.current?.listen({ handsFree: true });
+    }
   }
 
   function reset() {
