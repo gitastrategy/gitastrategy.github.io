@@ -10,21 +10,7 @@ import {
   type ChatMessage,
 } from "../../lib/chat-store";
 import { track } from "../../lib/analytics";
-
-// Minimal structural types for the Web Speech API (not in the TS DOM lib).
-type SpeechResult = { 0: { transcript: string }; isFinal: boolean };
-type SpeechEvent = { resultIndex: number; results: ArrayLike<SpeechResult> };
-type Recognition = {
-  lang: string;
-  continuous: boolean;
-  interimResults: boolean;
-  start: () => void;
-  stop: () => void;
-  abort: () => void;
-  onresult: ((event: SpeechEvent) => void) | null;
-  onerror: (() => void) | null;
-  onend: (() => void) | null;
-};
+import { micSupported, speakerSupported, VoiceSession, type VoicePhase } from "../../lib/voice-session";
 
 const GREETING =
   "Namaste. Tell me the decision, the team or the doubt in front of you — I will read it through the Gita and give you one action for this week. Type it, or tap the mic and speak.";
@@ -36,28 +22,51 @@ const SUGGESTIONS = [
   "I have lost confidence in myself as a leader.",
 ];
 
+const PHASE_LABEL: Record<VoicePhase, string> = {
+  idle: "Text or voice · answers grounded in the Gita",
+  listening: "Listening…",
+  processing: "Thinking…",
+  speaking: "Speaking — tap the mic to interrupt",
+};
+
 export function Chatbot({ compact = false }: { compact?: boolean }) {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [listening, setListening] = useState(false);
+  const [phase, setPhase] = useState<VoicePhase>("idle");
+  const [handsFree, setHandsFree] = useState(false);
   const [speakReplies, setSpeakReplies] = useState(false);
   const [voiceSupported, setVoiceSupported] = useState(false);
   const [speechSupported, setSpeechSupported] = useState(false);
 
-  const recognitionRef = useRef<Recognition | null>(null);
   const transcriptRef = useRef<HTMLDivElement | null>(null);
   const inputRef = useRef<HTMLTextAreaElement | null>(null);
   const abortRef = useRef<AbortController | null>(null);
   const lastQuestionRef = useRef<string>("");
+  const voiceRef = useRef<VoiceSession | null>(null);
+  const sendRef = useRef<(text: string) => void>(() => {});
 
   // Restore the single saved conversation once, on the client.
   useEffect(() => {
     setMessages(loadConversation());
-    const w = window as unknown as Record<string, unknown>;
-    setVoiceSupported(Boolean(w["SpeechRecognition"] || w["webkitSpeechRecognition"]));
-    setSpeechSupported(typeof window.speechSynthesis !== "undefined");
+    setVoiceSupported(micSupported());
+    setSpeechSupported(speakerSupported());
+  }, []);
+
+  // One session manager owns the mic and the speaker for the whole component.
+  useEffect(() => {
+    const session = new VoiceSession({
+      onPhase: setPhase,
+      onInterim: (text) => setInput(text),
+      onFinal: (text) => sendRef.current(text),
+      onError: (message) => {
+        setError(message);
+        setPhase("idle");
+      },
+    });
+    voiceRef.current = session;
+    return () => session.stop();
   }, []);
 
   useEffect(() => {
@@ -71,30 +80,14 @@ export function Chatbot({ compact = false }: { compact?: boolean }) {
     });
   }, [messages, busy]);
 
-  useEffect(
-    () => () => {
-      abortRef.current?.abort();
-      recognitionRef.current?.abort();
-      if (typeof window !== "undefined" && window.speechSynthesis) window.speechSynthesis.cancel();
-    },
-    [],
-  );
-
-  const speak = useCallback((text: string) => {
-    if (typeof window === "undefined" || !window.speechSynthesis) return;
-    window.speechSynthesis.cancel();
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.rate = 0.98;
-    utterance.pitch = 0.9;
-    utterance.lang = "en-IN";
-    window.speechSynthesis.speak(utterance);
-  }, []);
+  useEffect(() => () => abortRef.current?.abort(), []);
 
   const send = useCallback(
     async (text: string, opts: { retryOf?: string } = {}) => {
       const question = text.trim();
       if (!question || busy) return;
       lastQuestionRef.current = question;
+      const voice = voiceRef.current;
 
       const history = [
         ...messages.map((m) => ({ role: m.role, content: m.content })),
@@ -105,6 +98,7 @@ export function Chatbot({ compact = false }: { compact?: boolean }) {
       setInput("");
       setError(null);
       setBusy(true);
+      voice?.processing();
       track("chat_message_sent", { retry: Boolean(opts.retryOf) });
 
       abortRef.current?.abort();
@@ -129,8 +123,10 @@ export function Chatbot({ compact = false }: { compact?: boolean }) {
           throw new Error(data.error ?? "The assistant could not answer just now.");
         }
 
+        // One reply → one message, spoken at most once.
         setMessages((m) => [...m, newMessage("assistant", data.reply as string)]);
-        if (speakReplies) speak(data.reply);
+        if (speakReplies) voice?.speak(data.reply);
+        else voice?.finishTurn();
         track("chat_reply_received", {});
       } catch (err) {
         if (controller.signal.aborted) {
@@ -138,6 +134,7 @@ export function Chatbot({ compact = false }: { compact?: boolean }) {
         } else {
           setError(err instanceof Error ? err.message : "Something went wrong. Please try again.");
         }
+        voice?.fail();
         track("chat_error", {});
       } finally {
         clearTimeout(timer);
@@ -145,38 +142,42 @@ export function Chatbot({ compact = false }: { compact?: boolean }) {
         inputRef.current?.focus();
       }
     },
-    [busy, messages, speak, speakReplies],
+    [busy, messages, speakReplies],
   );
 
-  function toggleListening() {
-    if (listening) {
-      recognitionRef.current?.stop();
+  // Keeps the voice manager's callback pointing at the current send().
+  useEffect(() => {
+    sendRef.current = (text: string) => void send(text);
+  }, [send]);
+
+  /** Single control for the whole voice flow, per conversation phase. */
+  function onMicPress() {
+    const voice = voiceRef.current;
+    if (!voice) return;
+    setError(null);
+    if (phase === "listening") {
+      voice.finishListening();
       return;
     }
-    const w = window as unknown as Record<string, unknown>;
-    const Ctor = (w["SpeechRecognition"] ?? w["webkitSpeechRecognition"]) as
-      | (new () => Recognition)
-      | undefined;
-    if (!Ctor) return;
+    if (phase === "speaking") {
+      // Barge-in: stop the assistant and capture the user straight away.
+      voice.interrupt();
+      track("chat_voice_bargein", {});
+      return;
+    }
+    if (phase === "processing") return;
+    void voice.listen({ handsFree });
+    track("chat_voice_started", { handsFree });
+  }
 
-    const recognition = new Ctor();
-    recognition.lang = "en-IN";
-    recognition.continuous = false;
-    recognition.interimResults = true;
-    recognition.onresult = (event) => {
-      let text = "";
-      for (let i = event.resultIndex; i < event.results.length; i++) {
-        const result = event.results[i];
-        if (result) text += result[0].transcript;
-      }
-      setInput(text);
-    };
-    recognition.onerror = () => setListening(false);
-    recognition.onend = () => setListening(false);
-    recognitionRef.current = recognition;
-    recognition.start();
-    setListening(true);
-    track("chat_voice_started", {});
+  function toggleHandsFree() {
+    const next = !handsFree;
+    setHandsFree(next);
+    if (!next) voiceRef.current?.stop();
+    else {
+      setSpeakReplies(true);
+      void voiceRef.current?.listen({ handsFree: true });
+    }
   }
 
   function reset() {
@@ -184,7 +185,8 @@ export function Chatbot({ compact = false }: { compact?: boolean }) {
     clearConversation();
     setMessages([]);
     setError(null);
-    if (typeof window !== "undefined") window.speechSynthesis?.cancel();
+    voiceRef.current?.stop();
+    setHandsFree(false);
     track("chat_cleared", {});
   }
 
@@ -203,7 +205,7 @@ export function Chatbot({ compact = false }: { compact?: boolean }) {
           <div className="min-w-0">
             <p className="truncate text-sm font-semibold">Gita Strategy Assistant</p>
             <p className="truncate text-xs text-muted-foreground">
-              {busy ? "Thinking…" : "Text or voice · answers grounded in the Gita"}
+              {busy ? PHASE_LABEL.processing : PHASE_LABEL[phase]}
             </p>
           </div>
         </div>
@@ -213,7 +215,7 @@ export function Chatbot({ compact = false }: { compact?: boolean }) {
               type="button"
               onClick={() => {
                 setSpeakReplies((s) => !s);
-                if (speakReplies) window.speechSynthesis?.cancel();
+                if (speakReplies) voiceRef.current?.stopSpeaking();
               }}
               aria-pressed={speakReplies}
               title={speakReplies ? "Turn voice replies off" : "Read replies aloud"}
@@ -302,24 +304,48 @@ export function Chatbot({ compact = false }: { compact?: boolean }) {
       >
         <div className="flex items-end gap-2">
           {voiceSupported ? (
-            <button
-              type="button"
-              onClick={toggleListening}
-              aria-pressed={listening}
-              title={listening ? "Stop listening" : "Speak your question"}
-              className={`grid h-11 w-11 shrink-0 place-items-center rounded-full border transition-colors ${
-                listening
-                  ? "border-transparent bg-destructive text-white"
-                  : "border-border text-muted-foreground hover:text-foreground"
-              }`}
-            >
-              {listening ? (
-                <Square className="h-4 w-4" aria-hidden="true" />
-              ) : (
-                <Mic className="h-4 w-4" aria-hidden="true" />
-              )}
-              <span className="sr-only">{listening ? "Stop listening" : "Start voice input"}</span>
-            </button>
+            <>
+              <button
+                type="button"
+                onClick={onMicPress}
+                aria-pressed={phase === "listening"}
+                disabled={phase === "processing" || busy}
+                title={
+                  phase === "listening"
+                    ? "Stop listening and send"
+                    : phase === "speaking"
+                      ? "Interrupt and speak"
+                      : "Speak your question"
+                }
+                className={`grid h-11 w-11 shrink-0 place-items-center rounded-full border transition-colors disabled:opacity-50 ${
+                  phase === "listening"
+                    ? "border-transparent bg-destructive text-white"
+                    : "border-border text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                {phase === "listening" ? (
+                  <Square className="h-4 w-4" aria-hidden="true" />
+                ) : (
+                  <Mic className="h-4 w-4" aria-hidden="true" />
+                )}
+                <span className="sr-only">
+                  {phase === "listening" ? "Stop listening and send" : "Start voice input"}
+                </span>
+              </button>
+              <button
+                type="button"
+                onClick={toggleHandsFree}
+                aria-pressed={handsFree}
+                title={handsFree ? "End hands-free conversation" : "Start hands-free conversation"}
+                className={`hidden h-11 shrink-0 items-center rounded-full border px-3 text-xs font-semibold transition-colors sm:inline-flex ${
+                  handsFree
+                    ? "border-transparent bg-[image:var(--gradient-gold)] text-primary"
+                    : "border-border text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                {handsFree ? "Hands-free on" : "Hands-free"}
+              </button>
+            </>
           ) : null}
 
           <label htmlFor="chat-input" className="sr-only">
@@ -338,7 +364,9 @@ export function Chatbot({ compact = false }: { compact?: boolean }) {
                 void send(input);
               }
             }}
-            placeholder={listening ? "Listening…" : "Ask about a decision, a team or a dilemma"}
+            placeholder={
+              phase === "listening" ? "Listening…" : "Ask about a decision, a team or a dilemma"
+            }
             className="max-h-32 min-h-11 flex-1 resize-y rounded-2xl border border-input bg-background px-4 py-2.5 text-sm outline-none transition-colors focus:border-accent focus:ring-2 focus:ring-accent/30 disabled:opacity-60"
           />
 
