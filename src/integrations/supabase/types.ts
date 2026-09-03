@@ -14,7 +14,117 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      articles: {
+        Row: {
+          category: string
+          content: string
+          created_at: string
+          date_label: string
+          id: string
+          image_url: string
+          kind: string
+          published_at: string | null
+          slug: string
+          source_id: string
+          status: string
+          sub_category: string
+          summary: string
+          title: string
+          topic: string
+          trend: string
+          updated_at: string
+          urn: string
+        }
+        Insert: {
+          category?: string
+          content?: string
+          created_at?: string
+          date_label?: string
+          id?: string
+          image_url?: string
+          kind?: string
+          published_at?: string | null
+          slug: string
+          source_id?: string
+          status?: string
+          sub_category?: string
+          summary?: string
+          title: string
+          topic?: string
+          trend?: string
+          updated_at?: string
+          urn?: string
+        }
+        Update: {
+          category?: string
+          content?: string
+          created_at?: string
+          date_label?: string
+          id?: string
+          image_url?: string
+          kind?: string
+          published_at?: string | null
+          slug?: string
+          source_id?: string
+          status?: string
+          sub_category?: string
+          summary?: string
+          title?: string
+          topic?: string
+          trend?: string
+          updated_at?: string
+          urn?: string
+        }
+        Relationships: []
+      }
+      enquiries: {
+        Row: {
+          category: string
+          created_at: string
+          delivered_email: boolean
+          delivered_webhook: boolean
+          delivery_error: string | null
+          email: string
+          id: string
+          message: string
+          name: string
+          phone: string
+          source: string
+          subject: string
+          user_agent: string
+        }
+        Insert: {
+          category?: string
+          created_at?: string
+          delivered_email?: boolean
+          delivered_webhook?: boolean
+          delivery_error?: string | null
+          email: string
+          id?: string
+          message: string
+          name: string
+          phone?: string
+          source?: string
+          subject?: string
+          user_agent?: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          delivered_email?: boolean
+          delivered_webhook?: boolean
+          delivery_error?: string | null
+          email?: string
+          id?: string
+          message?: string
+          name?: string
+          phone?: string
+          source?: string
+          subject?: string
+          user_agent?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
