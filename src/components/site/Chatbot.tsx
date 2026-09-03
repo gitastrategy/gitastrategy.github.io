@@ -10,21 +10,7 @@ import {
   type ChatMessage,
 } from "../../lib/chat-store";
 import { track } from "../../lib/analytics";
-
-// Minimal structural types for the Web Speech API (not in the TS DOM lib).
-type SpeechResult = { 0: { transcript: string }; isFinal: boolean };
-type SpeechEvent = { resultIndex: number; results: ArrayLike<SpeechResult> };
-type Recognition = {
-  lang: string;
-  continuous: boolean;
-  interimResults: boolean;
-  start: () => void;
-  stop: () => void;
-  abort: () => void;
-  onresult: ((event: SpeechEvent) => void) | null;
-  onerror: (() => void) | null;
-  onend: (() => void) | null;
-};
+import { micSupported, speakerSupported, VoiceSession, type VoicePhase } from "../../lib/voice-session";
 
 const GREETING =
   "Namaste. Tell me the decision, the team or the doubt in front of you — I will read it through the Gita and give you one action for this week. Type it, or tap the mic and speak.";
@@ -36,28 +22,51 @@ const SUGGESTIONS = [
   "I have lost confidence in myself as a leader.",
 ];
 
+const PHASE_LABEL: Record<VoicePhase, string> = {
+  idle: "Text or voice · answers grounded in the Gita",
+  listening: "Listening…",
+  processing: "Thinking…",
+  speaking: "Speaking — tap the mic to interrupt",
+};
+
 export function Chatbot({ compact = false }: { compact?: boolean }) {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [listening, setListening] = useState(false);
+  const [phase, setPhase] = useState<VoicePhase>("idle");
+  const [handsFree, setHandsFree] = useState(false);
   const [speakReplies, setSpeakReplies] = useState(false);
   const [voiceSupported, setVoiceSupported] = useState(false);
   const [speechSupported, setSpeechSupported] = useState(false);
 
-  const recognitionRef = useRef<Recognition | null>(null);
   const transcriptRef = useRef<HTMLDivElement | null>(null);
   const inputRef = useRef<HTMLTextAreaElement | null>(null);
   const abortRef = useRef<AbortController | null>(null);
   const lastQuestionRef = useRef<string>("");
+  const voiceRef = useRef<VoiceSession | null>(null);
+  const sendRef = useRef<(text: string) => void>(() => {});
 
   // Restore the single saved conversation once, on the client.
   useEffect(() => {
     setMessages(loadConversation());
-    const w = window as unknown as Record<string, unknown>;
-    setVoiceSupported(Boolean(w["SpeechRecognition"] || w["webkitSpeechRecognition"]));
-    setSpeechSupported(typeof window.speechSynthesis !== "undefined");
+    setVoiceSupported(micSupported());
+    setSpeechSupported(speakerSupported());
+  }, []);
+
+  // One session manager owns the mic and the speaker for the whole component.
+  useEffect(() => {
+    const session = new VoiceSession({
+      onPhase: setPhase,
+      onInterim: (text) => setInput(text),
+      onFinal: (text) => sendRef.current(text),
+      onError: (message) => {
+        setError(message);
+        setPhase("idle");
+      },
+    });
+    voiceRef.current = session;
+    return () => session.stop();
   }, []);
 
   useEffect(() => {
