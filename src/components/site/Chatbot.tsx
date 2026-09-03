@@ -185,7 +185,8 @@ export function Chatbot({ compact = false }: { compact?: boolean }) {
     clearConversation();
     setMessages([]);
     setError(null);
-    if (typeof window !== "undefined") window.speechSynthesis?.cancel();
+    voiceRef.current?.stop();
+    setHandsFree(false);
     track("chat_cleared", {});
   }
 
@@ -204,7 +205,7 @@ export function Chatbot({ compact = false }: { compact?: boolean }) {
           <div className="min-w-0">
             <p className="truncate text-sm font-semibold">Gita Strategy Assistant</p>
             <p className="truncate text-xs text-muted-foreground">
-              {busy ? "Thinking…" : "Text or voice · answers grounded in the Gita"}
+              {busy ? PHASE_LABEL.processing : PHASE_LABEL[phase]}
             </p>
           </div>
         </div>
@@ -214,7 +215,7 @@ export function Chatbot({ compact = false }: { compact?: boolean }) {
               type="button"
               onClick={() => {
                 setSpeakReplies((s) => !s);
-                if (speakReplies) window.speechSynthesis?.cancel();
+                if (speakReplies) voiceRef.current?.stopSpeaking();
               }}
               aria-pressed={speakReplies}
               title={speakReplies ? "Turn voice replies off" : "Read replies aloud"}
@@ -303,24 +304,48 @@ export function Chatbot({ compact = false }: { compact?: boolean }) {
       >
         <div className="flex items-end gap-2">
           {voiceSupported ? (
-            <button
-              type="button"
-              onClick={toggleListening}
-              aria-pressed={listening}
-              title={listening ? "Stop listening" : "Speak your question"}
-              className={`grid h-11 w-11 shrink-0 place-items-center rounded-full border transition-colors ${
-                listening
-                  ? "border-transparent bg-destructive text-white"
-                  : "border-border text-muted-foreground hover:text-foreground"
-              }`}
-            >
-              {listening ? (
-                <Square className="h-4 w-4" aria-hidden="true" />
-              ) : (
-                <Mic className="h-4 w-4" aria-hidden="true" />
-              )}
-              <span className="sr-only">{listening ? "Stop listening" : "Start voice input"}</span>
-            </button>
+            <>
+              <button
+                type="button"
+                onClick={onMicPress}
+                aria-pressed={phase === "listening"}
+                disabled={phase === "processing" || busy}
+                title={
+                  phase === "listening"
+                    ? "Stop listening and send"
+                    : phase === "speaking"
+                      ? "Interrupt and speak"
+                      : "Speak your question"
+                }
+                className={`grid h-11 w-11 shrink-0 place-items-center rounded-full border transition-colors disabled:opacity-50 ${
+                  phase === "listening"
+                    ? "border-transparent bg-destructive text-white"
+                    : "border-border text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                {phase === "listening" ? (
+                  <Square className="h-4 w-4" aria-hidden="true" />
+                ) : (
+                  <Mic className="h-4 w-4" aria-hidden="true" />
+                )}
+                <span className="sr-only">
+                  {phase === "listening" ? "Stop listening and send" : "Start voice input"}
+                </span>
+              </button>
+              <button
+                type="button"
+                onClick={toggleHandsFree}
+                aria-pressed={handsFree}
+                title={handsFree ? "End hands-free conversation" : "Start hands-free conversation"}
+                className={`hidden h-11 shrink-0 items-center rounded-full border px-3 text-xs font-semibold transition-colors sm:inline-flex ${
+                  handsFree
+                    ? "border-transparent bg-[image:var(--gradient-gold)] text-primary"
+                    : "border-border text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                {handsFree ? "Hands-free on" : "Hands-free"}
+              </button>
+            </>
           ) : null}
 
           <label htmlFor="chat-input" className="sr-only">
@@ -339,7 +364,9 @@ export function Chatbot({ compact = false }: { compact?: boolean }) {
                 void send(input);
               }
             }}
-            placeholder={listening ? "Listening…" : "Ask about a decision, a team or a dilemma"}
+            placeholder={
+              phase === "listening" ? "Listening…" : "Ask about a decision, a team or a dilemma"
+            }
             className="max-h-32 min-h-11 flex-1 resize-y rounded-2xl border border-input bg-background px-4 py-2.5 text-sm outline-none transition-colors focus:border-accent focus:ring-2 focus:ring-accent/30 disabled:opacity-60"
           />
 
