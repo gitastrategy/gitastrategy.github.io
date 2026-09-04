@@ -26,6 +26,7 @@ import { Route as ApiKrishnaRouteImport } from './routes/api/krishna'
 import { Route as ArticlesIndexRouteImport } from './routes/articles.index'
 import { Route as ArticlesSlugRouteImport } from './routes/articles.$slug'
 import { Route as ApiPublicArticlesRouteImport } from './routes/api/public/articles'
+import { Route as ApiPublicSyncArticlesRouteImport } from './routes/api/public/sync-articles'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -112,6 +113,11 @@ const ApiPublicArticlesRoute = ApiPublicArticlesRouteImport.update({
   path: '/api/public/articles',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicSyncArticlesRoute = ApiPublicSyncArticlesRouteImport.update({
+  id: '/api/public/sync-articles',
+  path: '/api/public/sync-articles',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -131,6 +137,7 @@ export interface FileRoutesByFullPath {
   '/articles/$slug': typeof ArticlesSlugRoute
   '/articles/': typeof ArticlesIndexRoute
   '/api/public/articles': typeof ApiPublicArticlesRoute
+  '/api/public/sync-articles': typeof ApiPublicSyncArticlesRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -150,6 +157,7 @@ export interface FileRoutesByTo {
   '/articles/$slug': typeof ArticlesSlugRoute
   '/articles': typeof ArticlesIndexRoute
   '/api/public/articles': typeof ApiPublicArticlesRoute
+  '/api/public/sync-articles': typeof ApiPublicSyncArticlesRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -170,6 +178,7 @@ export interface FileRoutesById {
   '/articles/$slug': typeof ArticlesSlugRoute
   '/articles/': typeof ArticlesIndexRoute
   '/api/public/articles': typeof ApiPublicArticlesRoute
+  '/api/public/sync-articles': typeof ApiPublicSyncArticlesRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -191,6 +200,7 @@ export interface FileRouteTypes {
     | '/articles/$slug'
     | '/articles/'
     | '/api/public/articles'
+    | '/api/public/sync-articles'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -210,6 +220,7 @@ export interface FileRouteTypes {
     | '/articles/$slug'
     | '/articles'
     | '/api/public/articles'
+    | '/api/public/sync-articles'
   id:
     | '__root__'
     | '/'
@@ -229,6 +240,7 @@ export interface FileRouteTypes {
     | '/articles/$slug'
     | '/articles/'
     | '/api/public/articles'
+    | '/api/public/sync-articles'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -249,6 +261,7 @@ export interface RootRouteChildren {
   ArticlesSlugRoute: typeof ArticlesSlugRoute
   ArticlesIndexRoute: typeof ArticlesIndexRoute
   ApiPublicArticlesRoute: typeof ApiPublicArticlesRoute
+  ApiPublicSyncArticlesRoute: typeof ApiPublicSyncArticlesRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -372,6 +385,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicArticlesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/sync-articles': {
+      id: '/api/public/sync-articles'
+      path: '/api/public/sync-articles'
+      fullPath: '/api/public/sync-articles'
+      preLoaderRoute: typeof ApiPublicSyncArticlesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -393,6 +413,7 @@ const rootRouteChildren: RootRouteChildren = {
   ArticlesSlugRoute: ArticlesSlugRoute,
   ArticlesIndexRoute: ArticlesIndexRoute,
   ApiPublicArticlesRoute: ApiPublicArticlesRoute,
+  ApiPublicSyncArticlesRoute: ApiPublicSyncArticlesRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
