@@ -18,13 +18,18 @@ import { Route as ContactRouteImport } from './routes/contact'
 import { Route as FeedbackRouteImport } from './routes/feedback'
 import { Route as LeadershipRouteImport } from './routes/leadership'
 import { Route as NewsletterRouteImport } from './routes/newsletter'
+import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as QuotesRouteImport } from './routes/quotes'
+import { Route as TermsRouteImport } from './routes/terms'
 import { Route as ToolkitRouteImport } from './routes/toolkit'
 import { Route as UnsubscribeRouteImport } from './routes/unsubscribe'
 import { Route as VersesRouteImport } from './routes/verses'
 import { Route as ApiKrishnaRouteImport } from './routes/api/krishna'
 import { Route as ArticlesIndexRouteImport } from './routes/articles.index'
 import { Route as ArticlesSlugRouteImport } from './routes/articles.$slug'
+import { Route as ApiPublicArticlesRouteImport } from './routes/api/public/articles'
+import { Route as ApiPublicContactRouteImport } from './routes/api/public/contact'
+import { Route as ApiPublicSyncArticlesRouteImport } from './routes/api/public/sync-articles'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -71,9 +76,19 @@ const NewsletterRoute = NewsletterRouteImport.update({
   path: '/newsletter',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const QuotesRoute = QuotesRouteImport.update({
   id: '/quotes',
   path: '/quotes',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TermsRoute = TermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ToolkitRoute = ToolkitRouteImport.update({
@@ -106,6 +121,21 @@ const ArticlesSlugRoute = ArticlesSlugRouteImport.update({
   path: '/articles/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicArticlesRoute = ApiPublicArticlesRouteImport.update({
+  id: '/api/public/articles',
+  path: '/api/public/articles',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicContactRoute = ApiPublicContactRouteImport.update({
+  id: '/api/public/contact',
+  path: '/api/public/contact',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicSyncArticlesRoute = ApiPublicSyncArticlesRouteImport.update({
+  id: '/api/public/sync-articles',
+  path: '/api/public/sync-articles',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -117,13 +147,18 @@ export interface FileRoutesByFullPath {
   '/feedback': typeof FeedbackRoute
   '/leadership': typeof LeadershipRoute
   '/newsletter': typeof NewsletterRoute
+  '/privacy': typeof PrivacyRoute
   '/quotes': typeof QuotesRoute
+  '/terms': typeof TermsRoute
   '/toolkit': typeof ToolkitRoute
   '/unsubscribe': typeof UnsubscribeRoute
   '/verses': typeof VersesRoute
   '/api/krishna': typeof ApiKrishnaRoute
   '/articles/$slug': typeof ArticlesSlugRoute
   '/articles/': typeof ArticlesIndexRoute
+  '/api/public/articles': typeof ApiPublicArticlesRoute
+  '/api/public/contact': typeof ApiPublicContactRoute
+  '/api/public/sync-articles': typeof ApiPublicSyncArticlesRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -135,13 +170,18 @@ export interface FileRoutesByTo {
   '/feedback': typeof FeedbackRoute
   '/leadership': typeof LeadershipRoute
   '/newsletter': typeof NewsletterRoute
+  '/privacy': typeof PrivacyRoute
   '/quotes': typeof QuotesRoute
+  '/terms': typeof TermsRoute
   '/toolkit': typeof ToolkitRoute
   '/unsubscribe': typeof UnsubscribeRoute
   '/verses': typeof VersesRoute
   '/api/krishna': typeof ApiKrishnaRoute
   '/articles/$slug': typeof ArticlesSlugRoute
   '/articles': typeof ArticlesIndexRoute
+  '/api/public/articles': typeof ApiPublicArticlesRoute
+  '/api/public/contact': typeof ApiPublicContactRoute
+  '/api/public/sync-articles': typeof ApiPublicSyncArticlesRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -154,13 +194,18 @@ export interface FileRoutesById {
   '/feedback': typeof FeedbackRoute
   '/leadership': typeof LeadershipRoute
   '/newsletter': typeof NewsletterRoute
+  '/privacy': typeof PrivacyRoute
   '/quotes': typeof QuotesRoute
+  '/terms': typeof TermsRoute
   '/toolkit': typeof ToolkitRoute
   '/unsubscribe': typeof UnsubscribeRoute
   '/verses': typeof VersesRoute
   '/api/krishna': typeof ApiKrishnaRoute
   '/articles/$slug': typeof ArticlesSlugRoute
   '/articles/': typeof ArticlesIndexRoute
+  '/api/public/articles': typeof ApiPublicArticlesRoute
+  '/api/public/contact': typeof ApiPublicContactRoute
+  '/api/public/sync-articles': typeof ApiPublicSyncArticlesRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -174,13 +219,18 @@ export interface FileRouteTypes {
     | '/feedback'
     | '/leadership'
     | '/newsletter'
+    | '/privacy'
     | '/quotes'
+    | '/terms'
     | '/toolkit'
     | '/unsubscribe'
     | '/verses'
     | '/api/krishna'
     | '/articles/$slug'
     | '/articles/'
+    | '/api/public/articles'
+    | '/api/public/contact'
+    | '/api/public/sync-articles'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -192,13 +242,18 @@ export interface FileRouteTypes {
     | '/feedback'
     | '/leadership'
     | '/newsletter'
+    | '/privacy'
     | '/quotes'
+    | '/terms'
     | '/toolkit'
     | '/unsubscribe'
     | '/verses'
     | '/api/krishna'
     | '/articles/$slug'
     | '/articles'
+    | '/api/public/articles'
+    | '/api/public/contact'
+    | '/api/public/sync-articles'
   id:
     | '__root__'
     | '/'
@@ -210,13 +265,18 @@ export interface FileRouteTypes {
     | '/feedback'
     | '/leadership'
     | '/newsletter'
+    | '/privacy'
     | '/quotes'
+    | '/terms'
     | '/toolkit'
     | '/unsubscribe'
     | '/verses'
     | '/api/krishna'
     | '/articles/$slug'
     | '/articles/'
+    | '/api/public/articles'
+    | '/api/public/contact'
+    | '/api/public/sync-articles'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -229,13 +289,18 @@ export interface RootRouteChildren {
   FeedbackRoute: typeof FeedbackRoute
   LeadershipRoute: typeof LeadershipRoute
   NewsletterRoute: typeof NewsletterRoute
+  PrivacyRoute: typeof PrivacyRoute
   QuotesRoute: typeof QuotesRoute
+  TermsRoute: typeof TermsRoute
   ToolkitRoute: typeof ToolkitRoute
   UnsubscribeRoute: typeof UnsubscribeRoute
   VersesRoute: typeof VersesRoute
   ApiKrishnaRoute: typeof ApiKrishnaRoute
   ArticlesSlugRoute: typeof ArticlesSlugRoute
   ArticlesIndexRoute: typeof ArticlesIndexRoute
+  ApiPublicArticlesRoute: typeof ApiPublicArticlesRoute
+  ApiPublicContactRoute: typeof ApiPublicContactRoute
+  ApiPublicSyncArticlesRoute: typeof ApiPublicSyncArticlesRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -303,11 +368,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof NewsletterRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/quotes': {
       id: '/quotes'
       path: '/quotes'
       fullPath: '/quotes'
       preLoaderRoute: typeof QuotesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/terms': {
+      id: '/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof TermsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/toolkit': {
@@ -352,6 +431,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ArticlesSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/articles': {
+      id: '/api/public/articles'
+      path: '/api/public/articles'
+      fullPath: '/api/public/articles'
+      preLoaderRoute: typeof ApiPublicArticlesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/contact': {
+      id: '/api/public/contact'
+      path: '/api/public/contact'
+      fullPath: '/api/public/contact'
+      preLoaderRoute: typeof ApiPublicContactRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/sync-articles': {
+      id: '/api/public/sync-articles'
+      path: '/api/public/sync-articles'
+      fullPath: '/api/public/sync-articles'
+      preLoaderRoute: typeof ApiPublicSyncArticlesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -365,13 +465,18 @@ const rootRouteChildren: RootRouteChildren = {
   FeedbackRoute: FeedbackRoute,
   LeadershipRoute: LeadershipRoute,
   NewsletterRoute: NewsletterRoute,
+  PrivacyRoute: PrivacyRoute,
   QuotesRoute: QuotesRoute,
+  TermsRoute: TermsRoute,
   ToolkitRoute: ToolkitRoute,
   UnsubscribeRoute: UnsubscribeRoute,
   VersesRoute: VersesRoute,
   ApiKrishnaRoute: ApiKrishnaRoute,
   ArticlesSlugRoute: ArticlesSlugRoute,
   ArticlesIndexRoute: ArticlesIndexRoute,
+  ApiPublicArticlesRoute: ApiPublicArticlesRoute,
+  ApiPublicContactRoute: ApiPublicContactRoute,
+  ApiPublicSyncArticlesRoute: ApiPublicSyncArticlesRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
