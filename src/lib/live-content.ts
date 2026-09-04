@@ -1,116 +1,44 @@
-// Live Google Sheet sync for the Article/Blog library.
+// Live content pipeline for the Article/Blog library.
 //
-// The build-time script (scripts/sync-content.mjs) bakes a snapshot into
-// src/data/linkedin-posts.ts so the site is fast and works offline. This module
-// refreshes that snapshot in the browser on every visit, so articles added or
-// edited in the sheet appear without a rebuild or any manual website update.
+// Priority order in the browser:
+//   1. The Cloud database feed (/api/public/articles) — updated by the scheduled
+//      Google Sheet sync, so a new sheet row publishes without a rebuild.
+//   2. The Google Sheet CSV directly, if the API is unreachable (static hosts).
+//   3. The snapshot baked into src/data at build time.
 
 import { useEffect, useState } from "react";
 import { allPosts, type ContentPost } from "../data/content";
 import type { LinkedInPost } from "../data/linkedin-posts";
+import { dateMs, sheetCsvToPosts } from "./csv";
+import { articlesCsvUrl } from "./sheet";
+import { withBase } from "./site-url";
 
-const SHEET_ID =
-  (import.meta.env["VITE_ARTICLES_SHEET_ID"] as string | undefined) ??
-  "1bYXRX8aThHDZdj0kslXDK-EdzR2-KjXJq4c880Q6Pkg";
-const SHEET_GID = (import.meta.env["VITE_ARTICLES_GID"] as string | undefined) ?? "0";
-
-const CSV_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&gid=${SHEET_GID}`;
-const CACHE_KEY = "gs:articles:v1";
+const CACHE_KEY = "gs:articles:v2";
 const CACHE_TTL_MS = 5 * 60 * 1000;
 const TIMEOUT_MS = 12_000;
 
-function parseCsv(text: string): string[][] {
-  const rows: string[][] = [];
-  let row: string[] = [];
-  let field = "";
-  let quoted = false;
-  for (let i = 0; i < text.length; i++) {
-    const c = text[i];
-    if (quoted) {
-      if (c === '"') {
-        if (text[i + 1] === '"') {
-          field += '"';
-          i++;
-        } else quoted = false;
-      } else field += c;
-    } else if (c === '"') quoted = true;
-    else if (c === ",") {
-      row.push(field);
-      field = "";
-    } else if (c === "\n") {
-      row.push(field);
-      rows.push(row);
-      row = [];
-      field = "";
-    } else if (c !== "\r") field += c as string;
-  }
-  if (field || row.length) {
-    row.push(field);
-    rows.push(row);
-  }
-  return rows.filter((r) => r.some((c) => c.trim()));
+/** Same-origin on Lovable/localhost, otherwise the hosted API. */
+function apiUrl(path: string): string {
+  const override = import.meta.env["VITE_API_BASE_URL"] as string | undefined;
+  if (override) return `${override.replace(/\/$/, "")}${path}`;
+  if (typeof window === "undefined") return withBase(path);
+  const host = window.location.hostname;
+  const sameOrigin =
+    host === "localhost" ||
+    host === "127.0.0.1" ||
+    host.endsWith(".lovable.app") ||
+    host.endsWith(".lovableproject.com");
+  return sameOrigin ? withBase(path) : `https://gitastrategy.lovable.app${path}`;
 }
 
-const slugify = (s: string) =>
-  s
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-|-$/g, "")
-    .slice(0, 80);
-
-const pick = (row: Record<string, string>, ...names: string[]) => {
-  for (const n of names) if (row[n]) return row[n] as string;
-  return "";
-};
-
-function toPosts(csv: string): LinkedInPost[] {
-  const rows = parseCsv(csv);
-  const header = (rows.shift() ?? []).map((h) => h.trim());
-  const records = rows.map((r) => {
-    const o: Record<string, string> = {};
-    header.forEach((h, i) => (o[h] = (r[i] ?? "").trim()));
-    return o;
-  });
-
-  const seen = new Set<string>();
-  return records
-    .filter((r) => pick(r, "Title"))
-    .map((r) => {
-      const title = pick(r, "Title");
-      let slug = slugify(title) || "post";
-      let n = 2;
-      while (seen.has(slug)) slug = `${slugify(title)}-${n++}`;
-      seen.add(slug);
-      return {
-        id: pick(r, "PostId", "Id") || slug,
-        slug,
-        date: pick(r, "Date"),
-        title,
-        category: pick(r, "Category"),
-        subCategory: pick(r, "SubCategory", "Sub Category"),
-        topic: pick(r, "Topic"),
-        trend: pick(r, "Trend"),
-        summary: pick(r, "Summary"),
-        content: pick(r, "Content", "Article", "Body"),
-        imageUrl: pick(r, "ImageUrl", "Image"),
-        urn: pick(r, "LinkedInPostURN", "URN"),
-      } satisfies LinkedInPost;
-    });
-}
-
-function time(date: string): number {
-  const t = Date.parse(date.replace(/-/g, " "));
-  return Number.isNaN(t) ? 0 : t;
-}
-
-/** Merges freshly fetched sheet articles over the built-in snapshot. */
+/** Merges freshly fetched articles over the built-in snapshot. */
 export function mergePosts(live: LinkedInPost[]): ContentPost[] {
   const base = allPosts();
   const blogs = base.filter((p) => p.kind === "blog");
   const bySlug = new Map<string, ContentPost>();
   for (const p of base.filter((p) => p.kind === "article")) bySlug.set(p.slug, p);
   for (const p of live) bySlug.set(p.slug, { ...p, kind: "article" });
-  return [...bySlug.values(), ...blogs].sort((a, b) => time(b.date) - time(a.date));
+  return [...bySlug.values(), ...blogs].sort((a, b) => dateMs(b.date) - dateMs(a.date));
 }
 
 function readCache(): LinkedInPost[] | null {
@@ -133,17 +61,37 @@ function writeCache(posts: LinkedInPost[]) {
   }
 }
 
+async function fromDatabase(signal: AbortSignal): Promise<LinkedInPost[]> {
+  const res = await fetch(apiUrl("/api/public/articles"), { signal });
+  if (!res.ok) throw new Error(`API responded ${res.status}`);
+  const body = (await res.json()) as { posts?: LinkedInPost[] };
+  const posts = body.posts ?? [];
+  if (posts.length === 0) throw new Error("API returned no articles");
+  return posts;
+}
+
+async function fromSheet(signal: AbortSignal): Promise<LinkedInPost[]> {
+  const res = await fetch(articlesCsvUrl(), { signal, redirect: "follow" });
+  if (!res.ok) throw new Error(`Sheet responded ${res.status}`);
+  const posts = sheetCsvToPosts(await res.text());
+  if (posts.length === 0) throw new Error("Sheet returned no articles");
+  return posts;
+}
+
 export async function fetchLivePosts(signal?: AbortSignal): Promise<LinkedInPost[]> {
   const cached = readCache();
   if (cached) return cached;
+
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), TIMEOUT_MS);
   signal?.addEventListener("abort", () => controller.abort(), { once: true });
   try {
-    const res = await fetch(CSV_URL, { signal: controller.signal, redirect: "follow" });
-    if (!res.ok) throw new Error(`Sheet responded ${res.status}`);
-    const posts = toPosts(await res.text());
-    if (posts.length === 0) throw new Error("Sheet returned no articles");
+    let posts: LinkedInPost[];
+    try {
+      posts = await fromDatabase(controller.signal);
+    } catch {
+      posts = await fromSheet(controller.signal);
+    }
     writeCache(posts);
     return posts;
   } finally {
@@ -159,8 +107,8 @@ export type LivePostsState = {
 
 /**
  * Returns the article library, starting from the built-in snapshot and
- * upgrading to the live sheet as soon as it arrives. Never blocks rendering
- * and silently keeps the snapshot if the sheet is unreachable.
+ * upgrading to live content as soon as it arrives. Never blocks rendering and
+ * silently keeps the snapshot if every source is unreachable.
  */
 export function useLivePosts(): LivePostsState {
   const [posts, setPosts] = useState<ContentPost[]>(() => allPosts());
