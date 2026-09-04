@@ -18,6 +18,7 @@ import { Route as ContactRouteImport } from './routes/contact'
 import { Route as FeedbackRouteImport } from './routes/feedback'
 import { Route as LeadershipRouteImport } from './routes/leadership'
 import { Route as NewsletterRouteImport } from './routes/newsletter'
+import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as QuotesRouteImport } from './routes/quotes'
 import { Route as ToolkitRouteImport } from './routes/toolkit'
 import { Route as UnsubscribeRouteImport } from './routes/unsubscribe'
@@ -72,6 +73,11 @@ const LeadershipRoute = LeadershipRouteImport.update({
 const NewsletterRoute = NewsletterRouteImport.update({
   id: '/newsletter',
   path: '/newsletter',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
   getParentRoute: () => rootRouteImport,
 } as any)
 const QuotesRoute = QuotesRouteImport.update({
@@ -135,6 +141,7 @@ export interface FileRoutesByFullPath {
   '/feedback': typeof FeedbackRoute
   '/leadership': typeof LeadershipRoute
   '/newsletter': typeof NewsletterRoute
+  '/privacy': typeof PrivacyRoute
   '/quotes': typeof QuotesRoute
   '/toolkit': typeof ToolkitRoute
   '/unsubscribe': typeof UnsubscribeRoute
@@ -156,6 +163,7 @@ export interface FileRoutesByTo {
   '/feedback': typeof FeedbackRoute
   '/leadership': typeof LeadershipRoute
   '/newsletter': typeof NewsletterRoute
+  '/privacy': typeof PrivacyRoute
   '/quotes': typeof QuotesRoute
   '/toolkit': typeof ToolkitRoute
   '/unsubscribe': typeof UnsubscribeRoute
@@ -178,6 +186,7 @@ export interface FileRoutesById {
   '/feedback': typeof FeedbackRoute
   '/leadership': typeof LeadershipRoute
   '/newsletter': typeof NewsletterRoute
+  '/privacy': typeof PrivacyRoute
   '/quotes': typeof QuotesRoute
   '/toolkit': typeof ToolkitRoute
   '/unsubscribe': typeof UnsubscribeRoute
@@ -201,6 +210,7 @@ export interface FileRouteTypes {
     | '/feedback'
     | '/leadership'
     | '/newsletter'
+    | '/privacy'
     | '/quotes'
     | '/toolkit'
     | '/unsubscribe'
@@ -222,6 +232,7 @@ export interface FileRouteTypes {
     | '/feedback'
     | '/leadership'
     | '/newsletter'
+    | '/privacy'
     | '/quotes'
     | '/toolkit'
     | '/unsubscribe'
@@ -243,6 +254,7 @@ export interface FileRouteTypes {
     | '/feedback'
     | '/leadership'
     | '/newsletter'
+    | '/privacy'
     | '/quotes'
     | '/toolkit'
     | '/unsubscribe'
@@ -265,6 +277,7 @@ export interface RootRouteChildren {
   FeedbackRoute: typeof FeedbackRoute
   LeadershipRoute: typeof LeadershipRoute
   NewsletterRoute: typeof NewsletterRoute
+  PrivacyRoute: typeof PrivacyRoute
   QuotesRoute: typeof QuotesRoute
   ToolkitRoute: typeof ToolkitRoute
   UnsubscribeRoute: typeof UnsubscribeRoute
@@ -340,6 +353,13 @@ declare module '@tanstack/react-router' {
       path: '/newsletter'
       fullPath: '/newsletter'
       preLoaderRoute: typeof NewsletterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/quotes': {
@@ -425,6 +445,7 @@ const rootRouteChildren: RootRouteChildren = {
   FeedbackRoute: FeedbackRoute,
   LeadershipRoute: LeadershipRoute,
   NewsletterRoute: NewsletterRoute,
+  PrivacyRoute: PrivacyRoute,
   QuotesRoute: QuotesRoute,
   ToolkitRoute: ToolkitRoute,
   UnsubscribeRoute: UnsubscribeRoute,
