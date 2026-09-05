@@ -1,6 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { generateText } from "ai";
 import { createLovableAiGatewayProvider } from "../../lib/ai-gateway.server";
+import { retrieveContext } from "../../lib/knowledge";
+
 
 type ChatMessage = { role: "user" | "assistant"; content: string };
 type Body = { messages?: unknown };
