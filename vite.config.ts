@@ -23,9 +23,12 @@ const staticRoutes = [
   "/feedback",
   "/newsletter",
   "/unsubscribe",
+  "/privacy",
+  "/terms",
   "/chat",
   "/articles",
   "/404",
+
 ];
 
 // Article detail pages come from the generated LinkedIn data file.

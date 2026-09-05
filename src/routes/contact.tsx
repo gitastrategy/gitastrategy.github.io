@@ -5,7 +5,7 @@ import { z } from "zod";
 import { toast } from "sonner";
 import { PageHeader, Section } from "../components/site/PageHeader";
 import { sendWebhook, WebhookError } from "../lib/webhook";
-import { WEBHOOKS } from "../lib/webhooks";
+import { contactEndpoint } from "../lib/webhooks";
 
 export const Route = createFileRoute("/contact")({
   head: () => ({
@@ -29,14 +29,40 @@ export const Route = createFileRoute("/contact")({
 });
 
 
+export const ENQUIRY_CATEGORIES = [
+  "General Enquiry",
+  "Sales",
+  "Marketing",
+  "Partnership",
+  "Support",
+  "Careers / HR",
+  "Speaking / Workshop",
+] as const;
+
 const schema = z.object({
   name: z.string().trim().min(2, "Please enter your name").max(100),
   email: z.string().trim().email("Enter a valid email address").max(255),
-  message: z.string().trim().min(10, "Please write at least 10 characters").max(1000),
+  phone: z
+    .string()
+    .trim()
+    .max(30)
+    .refine((v) => v === "" || /^[+0-9][0-9\s\-()]{6,}$/.test(v), "Enter a valid phone number"),
+  category: z.enum(ENQUIRY_CATEGORIES),
+  subject: z.string().trim().max(150),
+  message: z.string().trim().min(10, "Please write at least 10 characters").max(2000),
 });
 
 type FormValues = z.infer<typeof schema>;
 type FieldName = keyof FormValues;
+
+const EMPTY: FormValues = {
+  name: "",
+  email: "",
+  phone: "",
+  category: "General Enquiry",
+  subject: "",
+  message: "",
+};
 
 const departments = [
   { label: "General", email: "info@gitastrategy.in" },
@@ -47,10 +73,12 @@ const departments = [
   { label: "Careers / HR", email: "hr@gitastrategy.in" },
 ];
 
-const MESSAGE_LIMIT = 1000;
+
+const MESSAGE_LIMIT = 2000;
 
 function ContactPage() {
-  const [form, setForm] = useState<FormValues>({ name: "", email: "", message: "" });
+  const [form, setForm] = useState<FormValues>(EMPTY);
+  const [honeypot, setHoneypot] = useState("");
   const [errors, setErrors] = useState<Partial<Record<FieldName, string>>>({});
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [errorText, setErrorText] = useState("");
@@ -100,9 +128,14 @@ function ContactPage() {
     abortRef.current = controller;
 
     try {
-      await sendWebhook({ url: WEBHOOKS.contact, method: "POST", body: parsed.data, signal: controller.signal });
+      await sendWebhook({
+        url: contactEndpoint(),
+        method: "POST",
+        body: { ...parsed.data, website: honeypot },
+        signal: controller.signal,
+      });
       setStatus("success");
-      setForm({ name: "", email: "", message: "" });
+      setForm(EMPTY);
       toast.success("Message sent", { description: "We'll get back to you shortly." });
     } catch (error) {
       if (controller.signal.aborted && !(error instanceof WebhookError && error.kind === "timeout")) {
@@ -110,12 +143,13 @@ function ContactPage() {
       }
       const message =
         error instanceof WebhookError
-          ? `${error.message} Please try again, or email info@gitastrategy.in.`
-          : "Something went wrong sending your message. Please email info@gitastrategy.in.";
+          ? `${error.message} Please try again, or email gitastrategy@gmail.com.`
+          : "Something went wrong sending your message. Please email gitastrategy@gmail.com.";
       setStatus("error");
       setErrorText(message);
       toast.error("Message not sent", { description: message });
     }
+
   }
 
   const loading = status === "loading";
@@ -170,6 +204,72 @@ function ContactPage() {
                 />
               )}
             </Field>
+
+            <Field id="contact-phone" label="Phone (optional)" error={errors.phone}>
+              {(props) => (
+                <input
+                  {...props}
+                  type="tel"
+                  inputMode="tel"
+                  value={form.phone}
+                  onChange={(e) => update("phone", e.target.value)}
+                  onBlur={(e) => validateField("phone", e.target.value)}
+                  disabled={loading}
+                  autoComplete="tel"
+                  maxLength={30}
+                  className={inputClass(Boolean(errors.phone))}
+                  placeholder="+91 98765 43210"
+                />
+              )}
+            </Field>
+
+            <Field id="contact-category" label="What is this about?" error={errors.category}>
+              {(props) => (
+                <select
+                  {...props}
+                  value={form.category}
+                  onChange={(e) => update("category", e.target.value)}
+                  disabled={loading}
+                  className={inputClass(Boolean(errors.category))}
+                >
+                  {ENQUIRY_CATEGORIES.map((c) => (
+                    <option key={c} value={c}>
+                      {c}
+                    </option>
+                  ))}
+                </select>
+              )}
+            </Field>
+
+            <Field id="contact-subject" label="Subject (optional)" error={errors.subject}>
+              {(props) => (
+                <input
+                  {...props}
+                  value={form.subject}
+                  onChange={(e) => update("subject", e.target.value)}
+                  onBlur={(e) => validateField("subject", e.target.value)}
+                  disabled={loading}
+                  maxLength={150}
+                  className={inputClass(Boolean(errors.subject))}
+                  placeholder="Workshop for a leadership cohort"
+                />
+              )}
+            </Field>
+
+            {/* Honeypot: hidden from people, irresistible to bots. */}
+            <div aria-hidden="true" className="absolute -left-[9999px] h-0 w-0 overflow-hidden">
+              <label htmlFor="contact-website">Website</label>
+              <input
+                id="contact-website"
+                name="website"
+                tabIndex={-1}
+                autoComplete="off"
+                value={honeypot}
+                onChange={(e) => setHoneypot(e.target.value)}
+              />
+            </div>
+
+
 
             <Field
               id="contact-message"

@@ -1,6 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { generateText } from "ai";
 import { createLovableAiGatewayProvider } from "../../lib/ai-gateway.server";
+import { retrieveContext } from "../../lib/knowledge";
+
 
 type ChatMessage = { role: "user" | "assistant"; content: string };
 type Body = { messages?: unknown };
@@ -68,12 +70,18 @@ export const Route = createFileRoute("/api/krishna")({
 
         try {
           const gateway = createLovableAiGatewayProvider(apiKey);
+          const lastUser = [...messages].reverse().find((m) => m.role === "user")?.content ?? "";
+          const context = retrieveContext(lastUser);
+          const system = context
+            ? `${SYSTEM_PROMPT}\n\nUse the following Gita Strategy material when it is relevant. Prefer these verses, tools and case studies over generic advice, and refer to them by name.\n\n${context}`
+            : SYSTEM_PROMPT;
           const result = await generateText({
             model: gateway(MODEL),
-            system: SYSTEM_PROMPT,
+            system,
             messages,
           });
           return json({ reply: result.text }, 200);
+
         } catch (error) {
           const status = (error as { statusCode?: number; status?: number }).statusCode ??
             (error as { status?: number }).status ?? 500;

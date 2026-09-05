@@ -172,9 +172,27 @@ export function SiteFooter() {
             <MessageCircle className="h-4 w-4" aria-hidden="true" /> WhatsApp us
           </a>
           <SocialLinks className="mt-4" />
+          <ul className="mt-4 flex flex-wrap gap-x-4 gap-y-1 text-xs opacity-80">
+            <li>
+              <Link to="/privacy" className="hover:underline hover:opacity-100">
+                Privacy Policy
+              </Link>
+            </li>
+            <li>
+              <Link to="/terms" className="hover:underline hover:opacity-100">
+                Terms of Service
+              </Link>
+            </li>
+            <li>
+              <Link to="/feedback" className="hover:underline hover:opacity-100">
+                Feedback
+              </Link>
+            </li>
+          </ul>
           <p className="mt-4 text-xs opacity-70">
             © {new Date().getFullYear()} Gita Strategy. All rights reserved.
           </p>
+
         </div>
       </div>
     </footer>
