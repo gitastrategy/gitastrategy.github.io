@@ -38,13 +38,11 @@ export function FeedbackForm({
   idPrefix = "feedback",
   source = "gitastrategy.in/feedback",
   onSuccess,
-  showHostedFormLink = true,
 }: {
   idPrefix?: string;
   source?: string;
   /** Called after the success confirmation auto-closes (used by the modal). */
   onSuccess?: () => void;
-  showHostedFormLink?: boolean;
 }) {
   const [values, setValues] = useState<Values>(EMPTY);
   const [honeypot, setHoneypot] = useState("");
@@ -265,20 +263,6 @@ export function FeedbackForm({
         {busy ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" /> : null}
         {busy ? "Sending…" : "Send feedback"}
       </button>
-
-      {showHostedFormLink ? (
-        <p className="mt-5 text-center text-xs text-muted-foreground">
-          Prefer the standalone form?{" "}
-          <a
-            href={HOSTED_FORM}
-            target="_blank"
-            rel="noreferrer noopener"
-            className="inline-flex items-center gap-1 font-semibold text-accent hover:underline"
-          >
-            Open it here <ExternalLink className="h-3 w-3" aria-hidden="true" />
-          </a>
-        </p>
-      ) : null}
     </form>
   );
 }

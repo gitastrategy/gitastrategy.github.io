@@ -82,7 +82,6 @@ export function FeedbackModal() {
               <FeedbackForm
                 idPrefix="feedback-modal"
                 source="gitastrategy.in/modal"
-                showHostedFormLink={false}
                 onSuccess={close}
               />
             </div>
