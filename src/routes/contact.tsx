@@ -74,10 +74,11 @@ const departments = [
 ];
 
 
-const MESSAGE_LIMIT = 1000;
+const MESSAGE_LIMIT = 2000;
 
 function ContactPage() {
-  const [form, setForm] = useState<FormValues>({ name: "", email: "", message: "" });
+  const [form, setForm] = useState<FormValues>(EMPTY);
+  const [honeypot, setHoneypot] = useState("");
   const [errors, setErrors] = useState<Partial<Record<FieldName, string>>>({});
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [errorText, setErrorText] = useState("");
@@ -127,9 +128,14 @@ function ContactPage() {
     abortRef.current = controller;
 
     try {
-      await sendWebhook({ url: WEBHOOKS.contact, method: "POST", body: parsed.data, signal: controller.signal });
+      await sendWebhook({
+        url: contactEndpoint(),
+        method: "POST",
+        body: { ...parsed.data, website: honeypot },
+        signal: controller.signal,
+      });
       setStatus("success");
-      setForm({ name: "", email: "", message: "" });
+      setForm(EMPTY);
       toast.success("Message sent", { description: "We'll get back to you shortly." });
     } catch (error) {
       if (controller.signal.aborted && !(error instanceof WebhookError && error.kind === "timeout")) {
@@ -137,12 +143,13 @@ function ContactPage() {
       }
       const message =
         error instanceof WebhookError
-          ? `${error.message} Please try again, or email info@gitastrategy.in.`
-          : "Something went wrong sending your message. Please email info@gitastrategy.in.";
+          ? `${error.message} Please try again, or email gitastrategy@gmail.com.`
+          : "Something went wrong sending your message. Please email gitastrategy@gmail.com.";
       setStatus("error");
       setErrorText(message);
       toast.error("Message not sent", { description: message });
     }
+
   }
 
   const loading = status === "loading";
