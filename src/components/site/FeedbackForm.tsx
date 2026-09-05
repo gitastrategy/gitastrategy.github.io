@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type FormEvent } from "react";
-import { CheckCircle2, ExternalLink, Loader2 } from "lucide-react";
+import { CheckCircle2, Loader2 } from "lucide-react";
 import { z } from "zod";
 import { toast } from "sonner";
 import { sendWebhook, WebhookError } from "../../lib/webhook";
@@ -8,8 +8,6 @@ import { track } from "../../lib/analytics";
 import { WEBHOOKS } from "../../lib/webhooks";
 
 const WEBHOOK = WEBHOOKS.feedback;
-export const HOSTED_FORM =
-  "https://kayoge6.app.n8n.cloud/form/3758fb17-b23a-4263-9d39-937774107fc0";
 
 /** Seconds the success panel stays on screen before the form closes itself. */
 const AUTO_CLOSE_SECONDS = 4;
@@ -40,13 +38,11 @@ export function FeedbackForm({
   idPrefix = "feedback",
   source = "gitastrategy.in/feedback",
   onSuccess,
-  showHostedFormLink = true,
 }: {
   idPrefix?: string;
   source?: string;
   /** Called after the success confirmation auto-closes (used by the modal). */
   onSuccess?: () => void;
-  showHostedFormLink?: boolean;
 }) {
   const [values, setValues] = useState<Values>(EMPTY);
   const [honeypot, setHoneypot] = useState("");
@@ -267,20 +263,6 @@ export function FeedbackForm({
         {busy ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" /> : null}
         {busy ? "Sending…" : "Send feedback"}
       </button>
-
-      {showHostedFormLink ? (
-        <p className="mt-5 text-center text-xs text-muted-foreground">
-          Prefer the standalone form?{" "}
-          <a
-            href={HOSTED_FORM}
-            target="_blank"
-            rel="noreferrer noopener"
-            className="inline-flex items-center gap-1 font-semibold text-accent hover:underline"
-          >
-            Open it here <ExternalLink className="h-3 w-3" aria-hidden="true" />
-          </a>
-        </p>
-      ) : null}
     </form>
   );
 }

@@ -9,12 +9,15 @@
 
 ## Integrations
 
+All outbound endpoints live in `src/lib/webhooks.ts` — update them there and every form picks up the change.
+
 | Form | Method | Endpoint |
 | --- | --- | --- |
-| Contact | POST (JSON: `name`, `email`, `message`) | `https://rawaj.app.n8n.cloud/webhook/contact-us` |
+| Feedback | POST (JSON: `name`, `phone`, `email`, `feedback`, `source`, `submittedAt`) | `https://mibikef.app.n8n.cloud/webhook/feedback` |
 | Newsletter | GET (`?email=…&action=subscribe\|unsubscribe`) | `https://rawaj.app.n8n.cloud/webhook/GitaStrategyNewsletter` |
+| Contact | POST (JSON) to `/api/public/contact` — the server validates, stores and forwards the enquiry to the automation workflow | `https://rawaj.app.n8n.cloud/webhook/contact-us` (server-side forward) |
 
-Both are called directly from the browser — no server credentials required, so the build stays fully static-friendly.
+Feedback and newsletter are called directly from the browser; contact goes through the site's own API route so nothing is lost if the automation workflow is down.
 
 ## Local development
 
