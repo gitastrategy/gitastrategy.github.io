@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type FormEvent } from "react";
-import { CheckCircle2, ExternalLink, Loader2 } from "lucide-react";
+import { CheckCircle2, Loader2 } from "lucide-react";
 import { z } from "zod";
 import { toast } from "sonner";
 import { sendWebhook, WebhookError } from "../../lib/webhook";
@@ -8,8 +8,6 @@ import { track } from "../../lib/analytics";
 import { WEBHOOKS } from "../../lib/webhooks";
 
 const WEBHOOK = WEBHOOKS.feedback;
-export const HOSTED_FORM =
-  "https://kayoge6.app.n8n.cloud/form/3758fb17-b23a-4263-9d39-937774107fc0";
 
 /** Seconds the success panel stays on screen before the form closes itself. */
 const AUTO_CLOSE_SECONDS = 4;
