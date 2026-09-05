@@ -5,7 +5,7 @@ import { z } from "zod";
 import { toast } from "sonner";
 import { PageHeader, Section } from "../components/site/PageHeader";
 import { sendWebhook, WebhookError } from "../lib/webhook";
-import { WEBHOOKS } from "../lib/webhooks";
+import { contactEndpoint } from "../lib/webhooks";
 
 export const Route = createFileRoute("/contact")({
   head: () => ({

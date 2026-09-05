@@ -22,3 +22,23 @@ export function newsletterUrl(email: string, action: NewsletterAction): string {
   url.searchParams.set("action", action);
   return url.toString();
 }
+
+/**
+ * The contact endpoint. Our own server route validates, stores and forwards the
+ * enquiry, so nothing is lost if the automation workflow is down. Static hosts
+ * (GitHub Pages, custom domain) have no server, so they call the hosted API.
+ */
+export function contactEndpoint(): string {
+  const override = import.meta.env["VITE_API_BASE_URL"] as string | undefined;
+  if (override) return `${override.replace(/\/$/, "")}/api/public/contact`;
+  if (typeof window === "undefined") return withBase("/api/public/contact");
+  const host = window.location.hostname;
+  const sameOrigin =
+    host === "localhost" ||
+    host === "127.0.0.1" ||
+    host.endsWith(".lovable.app") ||
+    host.endsWith(".lovableproject.com");
+  return sameOrigin
+    ? withBase("/api/public/contact")
+    : "https://gitastrategy.lovable.app/api/public/contact";
+}
