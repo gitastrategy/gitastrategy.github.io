@@ -29,14 +29,40 @@ export const Route = createFileRoute("/contact")({
 });
 
 
+export const ENQUIRY_CATEGORIES = [
+  "General Enquiry",
+  "Sales",
+  "Marketing",
+  "Partnership",
+  "Support",
+  "Careers / HR",
+  "Speaking / Workshop",
+] as const;
+
 const schema = z.object({
   name: z.string().trim().min(2, "Please enter your name").max(100),
   email: z.string().trim().email("Enter a valid email address").max(255),
-  message: z.string().trim().min(10, "Please write at least 10 characters").max(1000),
+  phone: z
+    .string()
+    .trim()
+    .max(30)
+    .refine((v) => v === "" || /^[+0-9][0-9\s\-()]{6,}$/.test(v), "Enter a valid phone number"),
+  category: z.enum(ENQUIRY_CATEGORIES),
+  subject: z.string().trim().max(150),
+  message: z.string().trim().min(10, "Please write at least 10 characters").max(2000),
 });
 
 type FormValues = z.infer<typeof schema>;
 type FieldName = keyof FormValues;
+
+const EMPTY: FormValues = {
+  name: "",
+  email: "",
+  phone: "",
+  category: "General Enquiry",
+  subject: "",
+  message: "",
+};
 
 const departments = [
   { label: "General", email: "info@gitastrategy.in" },
@@ -46,6 +72,7 @@ const departments = [
   { label: "Support", email: "support@gitastrategy.in" },
   { label: "Careers / HR", email: "hr@gitastrategy.in" },
 ];
+
 
 const MESSAGE_LIMIT = 1000;
 
