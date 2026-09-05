@@ -205,6 +205,72 @@ function ContactPage() {
               )}
             </Field>
 
+            <Field id="contact-phone" label="Phone (optional)" error={errors.phone}>
+              {(props) => (
+                <input
+                  {...props}
+                  type="tel"
+                  inputMode="tel"
+                  value={form.phone}
+                  onChange={(e) => update("phone", e.target.value)}
+                  onBlur={(e) => validateField("phone", e.target.value)}
+                  disabled={loading}
+                  autoComplete="tel"
+                  maxLength={30}
+                  className={inputClass(Boolean(errors.phone))}
+                  placeholder="+91 98765 43210"
+                />
+              )}
+            </Field>
+
+            <Field id="contact-category" label="What is this about?" error={errors.category}>
+              {(props) => (
+                <select
+                  {...props}
+                  value={form.category}
+                  onChange={(e) => update("category", e.target.value)}
+                  disabled={loading}
+                  className={inputClass(Boolean(errors.category))}
+                >
+                  {ENQUIRY_CATEGORIES.map((c) => (
+                    <option key={c} value={c}>
+                      {c}
+                    </option>
+                  ))}
+                </select>
+              )}
+            </Field>
+
+            <Field id="contact-subject" label="Subject (optional)" error={errors.subject}>
+              {(props) => (
+                <input
+                  {...props}
+                  value={form.subject}
+                  onChange={(e) => update("subject", e.target.value)}
+                  onBlur={(e) => validateField("subject", e.target.value)}
+                  disabled={loading}
+                  maxLength={150}
+                  className={inputClass(Boolean(errors.subject))}
+                  placeholder="Workshop for a leadership cohort"
+                />
+              )}
+            </Field>
+
+            {/* Honeypot: hidden from people, irresistible to bots. */}
+            <div aria-hidden="true" className="absolute -left-[9999px] h-0 w-0 overflow-hidden">
+              <label htmlFor="contact-website">Website</label>
+              <input
+                id="contact-website"
+                name="website"
+                tabIndex={-1}
+                autoComplete="off"
+                value={honeypot}
+                onChange={(e) => setHoneypot(e.target.value)}
+              />
+            </div>
+
+
+
             <Field
               id="contact-message"
               label="Message"
