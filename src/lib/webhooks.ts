@@ -1,6 +1,9 @@
 // Single source of truth for every outbound n8n webhook used by the site.
 // Update an endpoint here and every form picks it up.
 
+import { withBase } from "./site-url";
+
+
 export const WEBHOOKS = {
   /** Newsletter subscribe / unsubscribe — GET with ?email=&action= */
   newsletter: "https://rawaj.app.n8n.cloud/webhook/GitaStrategyNewsletter",
