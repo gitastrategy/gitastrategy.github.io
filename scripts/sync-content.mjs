@@ -13,11 +13,17 @@
 //                       Trend, Summary, Content, ImageUrl, LinkedInPostURN
 import { writeFileSync } from "node:fs";
 
+// Treat blank/whitespace env vars (common with unset GitHub Actions vars) as unset.
+const env = (name) => {
+  const v = (process.env[name] ?? "").trim();
+  return v || undefined;
+};
+
 const ARTICLES_SHEET_ID =
-  process.env.ARTICLES_SHEET_ID ?? "1bYXRX8aThHDZdj0kslXDK-EdzR2-KjXJq4c880Q6Pkg";
-const ARTICLES_GID = process.env.ARTICLES_GID ?? "0";
-const VERSES_SHEET_ID = process.env.VERSES_SHEET_ID ?? "";
-const VERSES_GID = process.env.VERSES_GID ?? "0";
+  env("ARTICLES_SHEET_ID") ?? "1bYXRX8aThHDZdj0kslXDK-EdzR2-KjXJq4c880Q6Pkg";
+const ARTICLES_GID = env("ARTICLES_GID") ?? "0";
+const VERSES_SHEET_ID = env("VERSES_SHEET_ID") ?? "";
+const VERSES_GID = env("VERSES_GID") ?? "0";
 
 const sheetCsvUrl = (id, gid) =>
   `https://docs.google.com/spreadsheets/d/${id}/gviz/tq?tqx=out:csv&gid=${gid}`;
