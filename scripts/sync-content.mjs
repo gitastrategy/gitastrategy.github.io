@@ -13,11 +13,17 @@
 //                       Trend, Summary, Content, ImageUrl, LinkedInPostURN
 import { writeFileSync } from "node:fs";
 
+// Treat blank/whitespace env vars (common with unset GitHub Actions vars) as unset.
+const env = (name) => {
+  const v = (process.env[name] ?? "").trim();
+  return v || undefined;
+};
+
 const ARTICLES_SHEET_ID =
-  process.env.ARTICLES_SHEET_ID ?? "1bYXRX8aThHDZdj0kslXDK-EdzR2-KjXJq4c880Q6Pkg";
-const ARTICLES_GID = process.env.ARTICLES_GID ?? "0";
-const VERSES_SHEET_ID = process.env.VERSES_SHEET_ID ?? "";
-const VERSES_GID = process.env.VERSES_GID ?? "0";
+  env("ARTICLES_SHEET_ID") ?? "1bYXRX8aThHDZdj0kslXDK-EdzR2-KjXJq4c880Q6Pkg";
+const ARTICLES_GID = env("ARTICLES_GID") ?? "0";
+const VERSES_SHEET_ID = env("VERSES_SHEET_ID") ?? "";
+const VERSES_GID = env("VERSES_GID") ?? "0";
 
 const sheetCsvUrl = (id, gid) =>
   `https://docs.google.com/spreadsheets/d/${id}/gviz/tq?tqx=out:csv&gid=${gid}`;
@@ -80,7 +86,11 @@ const pick = (row, ...names) => {
 };
 
 async function syncArticles() {
-  const url = process.env.ARTICLES_CSV_URL || sheetCsvUrl(ARTICLES_SHEET_ID, ARTICLES_GID);
+  const url = env("ARTICLES_CSV_URL") || sheetCsvUrl(ARTICLES_SHEET_ID, ARTICLES_GID);
+  if (!env("ARTICLES_CSV_URL") && !ARTICLES_SHEET_ID) {
+    console.log("articles: skipped (set ARTICLES_SHEET_ID or ARTICLES_CSV_URL to enable)");
+    return;
+  }
   const rows = (await fetchRows(url)).filter((r) => pick(r, "Title"));
   const posts = rows.map((r) => {
     const title = pick(r, "Title");
@@ -146,11 +156,11 @@ export function findLinkedInPost(slug: string): LinkedInPost | undefined {
 }
 
 async function syncVerses() {
-  if (!process.env.VERSES_CSV_URL && !VERSES_SHEET_ID) {
+  if (!env("VERSES_CSV_URL") && !VERSES_SHEET_ID) {
     console.log("verses: skipped (set VERSES_SHEET_ID or VERSES_CSV_URL to enable)");
     return;
   }
-  const url = process.env.VERSES_CSV_URL || sheetCsvUrl(VERSES_SHEET_ID, VERSES_GID);
+  const url = env("VERSES_CSV_URL") || sheetCsvUrl(VERSES_SHEET_ID, VERSES_GID);
   const rows = (await fetchRows(url)).filter(
     (r) => pick(r, "Translation") && pick(r, "Reference", "Ref"),
   );
@@ -189,4 +199,6 @@ for (const [name, run] of tasks) {
     console.error(`${name}: sync failed — keeping existing data.\n  ${err.message}`);
   }
 }
-process.exit(failed ? 1 : 0);
+// A sheet that is unreachable or not shared must not fail the whole workflow:
+// existing committed content stays in place. Set STRICT_SYNC=1 to fail instead.
+process.exit(failed && env("STRICT_SYNC") === "1" ? 1 : 0);
