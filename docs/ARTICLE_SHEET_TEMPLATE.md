@@ -3,7 +3,7 @@
 Everything published under **Articles & Blog** comes from one Google Sheet.
 Add a row, and the article appears on the website — no rebuild needed.
 
-Sheet: https://docs.google.com/spreadsheets/d/1bYXRX8aThHDZdj0kslXDK-EdzR2-KjXJq4c880Q6Pkg
+Sheet: https://docs.google.com/spreadsheets/d/1Xj-mbqxq9yAyqMFCgDJTkGyV-Odo8kmXzFLme6IYqtY
 
 ## Columns (first row = headings, spelled exactly like this)
 
