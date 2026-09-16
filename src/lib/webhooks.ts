@@ -6,9 +6,9 @@ import { withBase } from "./site-url";
 
 export const WEBHOOKS = {
   /** Newsletter subscribe / unsubscribe — GET with ?email=&action= */
-  newsletter: "https://rawaj.app.n8n.cloud/webhook/GitaStrategyNewsletter",
+  newsletter: "https://vetixe.app.n8n.cloud/webhook/GitaStrategyNewsletter",
   /** Contact form — POST with a JSON body */
-  contact: "https://rawaj.app.n8n.cloud/webhook/contact-us",
+  contact: "https://vetixe.app.n8n.cloud/webhook/contact-us",
   /** Feedback form — POST with a JSON body */
   feedback: "https://mibikef.app.n8n.cloud/webhook/feedback",
 } as const;

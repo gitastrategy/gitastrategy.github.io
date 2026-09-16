@@ -20,7 +20,7 @@ const env = (name) => {
 };
 
 const ARTICLES_SHEET_ID =
-  env("ARTICLES_SHEET_ID") ?? "1bYXRX8aThHDZdj0kslXDK-EdzR2-KjXJq4c880Q6Pkg";
+  env("ARTICLES_SHEET_ID") ?? "1Xj-mbqxq9yAyqMFCgDJTkGyV-Odo8kmXzFLme6IYqtY";
 const ARTICLES_GID = env("ARTICLES_GID") ?? "0";
 const VERSES_SHEET_ID = env("VERSES_SHEET_ID") ?? "";
 const VERSES_GID = env("VERSES_GID") ?? "0";
@@ -101,9 +101,9 @@ async function syncArticles() {
       title,
       category: pick(r, "Category"),
       subCategory: pick(r, "SubCategory", "Sub Category"),
-      topic: pick(r, "Topic"),
+      topic: pick(r, "Topic", "CoreTopic"),
       trend: pick(r, "Trend"),
-      summary: pick(r, "Summary"),
+      summary: pick(r, "Summary", "TrendSummary"),
       content: pick(r, "Content", "Article", "Body"),
       imageUrl: pick(r, "ImageUrl", "Image"),
       urn: pick(r, "LinkedInPostURN", "URN"),
