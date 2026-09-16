@@ -20,7 +20,7 @@ const env = (name) => {
 };
 
 const ARTICLES_SHEET_ID =
-  env("ARTICLES_SHEET_ID") ?? "1bYXRX8aThHDZdj0kslXDK-EdzR2-KjXJq4c880Q6Pkg";
+  env("ARTICLES_SHEET_ID") ?? "1Xj-mbqxq9yAyqMFCgDJTkGyV-Odo8kmXzFLme6IYqtY";
 const ARTICLES_GID = env("ARTICLES_GID") ?? "0";
 const VERSES_SHEET_ID = env("VERSES_SHEET_ID") ?? "";
 const VERSES_GID = env("VERSES_GID") ?? "0";
