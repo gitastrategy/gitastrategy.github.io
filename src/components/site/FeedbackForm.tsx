@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type FormEvent } from "react";
-import { CheckCircle2, Loader2 } from "lucide-react";
+import { CheckCircle2, ExternalLink, Loader2 } from "lucide-react";
 import { z } from "zod";
 import { toast } from "sonner";
 import { sendWebhook, WebhookError } from "../../lib/webhook";
@@ -253,6 +253,19 @@ export function FeedbackForm({
         >
           {errorText}
         </p>
+      ) : null}
+
+      {status === "error" ? (
+        <a
+          href={WEBHOOKS.feedbackFallback}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mt-3 inline-flex items-center gap-1.5 text-sm font-medium text-accent underline-offset-4 hover:underline"
+        >
+          Still not working? Use the standalone feedback form
+          <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />
+          <span className="sr-only">(opens in a new tab)</span>
+        </a>
       ) : null}
 
       <button
