@@ -13,7 +13,7 @@ All outbound endpoints live in `src/lib/webhooks.ts` — update them there and e
 
 | Form | Method | Endpoint |
 | --- | --- | --- |
-| Feedback | POST (JSON: `name`, `phone`, `email`, `feedback`, `source`, `submittedAt`) | `https://mibikef.app.n8n.cloud/webhook/feedback` |
+| Feedback | POST (JSON: `name`, `phone`, `email`, `feedback`, `source`, `submittedAt`) | `https://xacade.app.n8n.cloud/webhook/feedback` |
 | Newsletter | GET (`?email=…&action=subscribe\|unsubscribe`) | `https://vetixe.app.n8n.cloud/webhook/GitaStrategyNewsletter` |
 | Contact | POST (JSON) to `/api/public/contact` — the server validates, stores and forwards the enquiry to the automation workflow | `https://vetixe.app.n8n.cloud/webhook/contact-us` (server-side forward) |
 
