@@ -11,7 +11,9 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as R404RouteImport } from './routes/404'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AboutRouteImport } from './routes/about'
+import { Route as AuthRouteImport } from './routes/auth'
 import { Route as CaseStudiesRouteImport } from './routes/case-studies'
 import { Route as ChatRouteImport } from './routes/chat'
 import { Route as ContactRouteImport } from './routes/contact'
@@ -27,6 +29,7 @@ import { Route as VersesRouteImport } from './routes/verses'
 import { Route as ApiKrishnaRouteImport } from './routes/api/krishna'
 import { Route as ArticlesIndexRouteImport } from './routes/articles.index'
 import { Route as ArticlesSlugRouteImport } from './routes/articles.$slug'
+import { Route as AuthenticatedAdminSettingsRouteImport } from './routes/_authenticated/admin.settings'
 import { Route as ApiPublicArticlesRouteImport } from './routes/api/public/articles'
 import { Route as ApiPublicContactRouteImport } from './routes/api/public/contact'
 import { Route as ApiPublicSyncArticlesRouteImport } from './routes/api/public/sync-articles'
@@ -41,9 +44,18 @@ const R404Route = R404RouteImport.update({
   path: '/404',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AboutRoute = AboutRouteImport.update({
   id: '/about',
   path: '/about',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CaseStudiesRoute = CaseStudiesRouteImport.update({
@@ -121,6 +133,12 @@ const ArticlesSlugRoute = ArticlesSlugRouteImport.update({
   path: '/articles/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedAdminSettingsRoute =
+  AuthenticatedAdminSettingsRouteImport.update({
+    id: '/admin/settings',
+    path: '/admin/settings',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const ApiPublicArticlesRoute = ApiPublicArticlesRouteImport.update({
   id: '/api/public/articles',
   path: '/api/public/articles',
@@ -141,6 +159,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/404': typeof R404Route
   '/about': typeof AboutRoute
+  '/auth': typeof AuthRoute
   '/case-studies': typeof CaseStudiesRoute
   '/chat': typeof ChatRoute
   '/contact': typeof ContactRoute
@@ -156,6 +175,7 @@ export interface FileRoutesByFullPath {
   '/api/krishna': typeof ApiKrishnaRoute
   '/articles/$slug': typeof ArticlesSlugRoute
   '/articles/': typeof ArticlesIndexRoute
+  '/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/api/public/articles': typeof ApiPublicArticlesRoute
   '/api/public/contact': typeof ApiPublicContactRoute
   '/api/public/sync-articles': typeof ApiPublicSyncArticlesRoute
@@ -164,6 +184,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/404': typeof R404Route
   '/about': typeof AboutRoute
+  '/auth': typeof AuthRoute
   '/case-studies': typeof CaseStudiesRoute
   '/chat': typeof ChatRoute
   '/contact': typeof ContactRoute
@@ -179,6 +200,7 @@ export interface FileRoutesByTo {
   '/api/krishna': typeof ApiKrishnaRoute
   '/articles/$slug': typeof ArticlesSlugRoute
   '/articles': typeof ArticlesIndexRoute
+  '/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/api/public/articles': typeof ApiPublicArticlesRoute
   '/api/public/contact': typeof ApiPublicContactRoute
   '/api/public/sync-articles': typeof ApiPublicSyncArticlesRoute
@@ -186,8 +208,10 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/404': typeof R404Route
   '/about': typeof AboutRoute
+  '/auth': typeof AuthRoute
   '/case-studies': typeof CaseStudiesRoute
   '/chat': typeof ChatRoute
   '/contact': typeof ContactRoute
@@ -203,6 +227,7 @@ export interface FileRoutesById {
   '/api/krishna': typeof ApiKrishnaRoute
   '/articles/$slug': typeof ArticlesSlugRoute
   '/articles/': typeof ArticlesIndexRoute
+  '/_authenticated/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/api/public/articles': typeof ApiPublicArticlesRoute
   '/api/public/contact': typeof ApiPublicContactRoute
   '/api/public/sync-articles': typeof ApiPublicSyncArticlesRoute
@@ -213,6 +238,7 @@ export interface FileRouteTypes {
     | '/'
     | '/404'
     | '/about'
+    | '/auth'
     | '/case-studies'
     | '/chat'
     | '/contact'
@@ -228,6 +254,7 @@ export interface FileRouteTypes {
     | '/api/krishna'
     | '/articles/$slug'
     | '/articles/'
+    | '/admin/settings'
     | '/api/public/articles'
     | '/api/public/contact'
     | '/api/public/sync-articles'
@@ -236,6 +263,7 @@ export interface FileRouteTypes {
     | '/'
     | '/404'
     | '/about'
+    | '/auth'
     | '/case-studies'
     | '/chat'
     | '/contact'
@@ -251,14 +279,17 @@ export interface FileRouteTypes {
     | '/api/krishna'
     | '/articles/$slug'
     | '/articles'
+    | '/admin/settings'
     | '/api/public/articles'
     | '/api/public/contact'
     | '/api/public/sync-articles'
   id:
     | '__root__'
     | '/'
+    | '/_authenticated'
     | '/404'
     | '/about'
+    | '/auth'
     | '/case-studies'
     | '/chat'
     | '/contact'
@@ -274,6 +305,7 @@ export interface FileRouteTypes {
     | '/api/krishna'
     | '/articles/$slug'
     | '/articles/'
+    | '/_authenticated/admin/settings'
     | '/api/public/articles'
     | '/api/public/contact'
     | '/api/public/sync-articles'
@@ -281,8 +313,10 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   R404Route: typeof R404Route
   AboutRoute: typeof AboutRoute
+  AuthRoute: typeof AuthRoute
   CaseStudiesRoute: typeof CaseStudiesRoute
   ChatRoute: typeof ChatRoute
   ContactRoute: typeof ContactRoute
@@ -319,11 +353,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof R404RouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/about': {
       id: '/about'
       path: '/about'
       fullPath: '/about'
       preLoaderRoute: typeof AboutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/case-studies': {
@@ -431,6 +479,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ArticlesSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/admin/settings': {
+      id: '/_authenticated/admin/settings'
+      path: '/admin/settings'
+      fullPath: '/admin/settings'
+      preLoaderRoute: typeof AuthenticatedAdminSettingsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/api/public/articles': {
       id: '/api/public/articles'
       path: '/api/public/articles'
@@ -455,10 +510,23 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAdminSettingsRoute: typeof AuthenticatedAdminSettingsRoute
+}
+
+const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAdminSettingsRoute: AuthenticatedAdminSettingsRoute,
+}
+
+const AuthenticatedRouteRouteWithChildren =
+  AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   R404Route: R404Route,
   AboutRoute: AboutRoute,
+  AuthRoute: AuthRoute,
   CaseStudiesRoute: CaseStudiesRoute,
   ChatRoute: ChatRoute,
   ContactRoute: ContactRoute,
