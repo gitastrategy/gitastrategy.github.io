@@ -4,6 +4,7 @@ import {
   Link,
   createRootRouteWithContext,
   useRouter,
+  useRouterState,
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
@@ -15,6 +16,7 @@ import { SiteHeader, SiteFooter } from "../components/site/SiteChrome";
 import { Toaster } from "../components/ui/sonner";
 import { FeedbackModal } from "../components/site/FeedbackModal";
 import { ChatWidget } from "../components/site/ChatWidget";
+import { loadIntegrationSettings } from "../lib/settings-client";
 
 function NotFoundComponent() {
   return (
@@ -150,6 +152,23 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const isPrivate = /\/(admin|auth)(\/|$)/.test(pathname);
+
+  useEffect(() => {
+    void loadIntegrationSettings();
+  }, []);
+
+  if (isPrivate) {
+    return (
+      <QueryClientProvider client={queryClient}>
+        <main id="main-content">
+          <Outlet />
+        </main>
+        <Toaster position="top-center" richColors />
+      </QueryClientProvider>
+    );
+  }
 
   return (
     <QueryClientProvider client={queryClient}>

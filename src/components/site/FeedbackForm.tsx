@@ -7,7 +7,6 @@ import { checkSubmission, honeypotProps, recordSubmission } from "../../lib/spam
 import { track } from "../../lib/analytics";
 import { WEBHOOKS } from "../../lib/webhooks";
 
-const WEBHOOK = WEBHOOKS.feedback;
 
 /** Seconds the success panel stays on screen before the form closes itself. */
 const AUTO_CLOSE_SECONDS = 4;
