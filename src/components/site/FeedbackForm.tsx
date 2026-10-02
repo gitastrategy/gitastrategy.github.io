@@ -117,7 +117,7 @@ export function FeedbackForm({
 
     try {
       await sendWebhook({
-        url: WEBHOOK,
+        url: WEBHOOKS.feedback,
         method: "POST",
         signal: controller.signal,
         body: {
