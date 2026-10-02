@@ -82,7 +82,19 @@ export const Route = createFileRoute("/api/public/contact")({
         let deliveredWebhook = false;
         let deliveryError: string | null = null;
         try {
-          const res = await fetch(WEBHOOKS.contact, {
+          let contactUrl = WEBHOOKS.contact;
+          try {
+            const { supabaseAdmin } = await import("../../../integrations/supabase/client.server");
+            const { data: row } = await supabaseAdmin
+              .from("integration_settings")
+              .select("url, enabled")
+              .eq("key", "contact")
+              .maybeSingle();
+            if (row?.enabled && row.url) contactUrl = row.url;
+          } catch {
+            /* fall back to the built-in link */
+          }
+          const res = await fetch(contactUrl, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
