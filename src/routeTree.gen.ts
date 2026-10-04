@@ -22,6 +22,7 @@ import { Route as LeadershipRouteImport } from './routes/leadership'
 import { Route as NewsletterRouteImport } from './routes/newsletter'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as QuotesRouteImport } from './routes/quotes'
+import { Route as RssDotxmlRouteImport } from './routes/rss[.]xml'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as ToolkitRouteImport } from './routes/toolkit'
 import { Route as UnsubscribeRouteImport } from './routes/unsubscribe'
@@ -98,6 +99,11 @@ const QuotesRoute = QuotesRouteImport.update({
   path: '/quotes',
   getParentRoute: () => rootRouteImport,
 } as any)
+const RssDotxmlRoute = RssDotxmlRouteImport.update({
+  id: '/rss.xml',
+  path: '/rss.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TermsRoute = TermsRouteImport.update({
   id: '/terms',
   path: '/terms',
@@ -168,6 +174,7 @@ export interface FileRoutesByFullPath {
   '/newsletter': typeof NewsletterRoute
   '/privacy': typeof PrivacyRoute
   '/quotes': typeof QuotesRoute
+  '/rss.xml': typeof RssDotxmlRoute
   '/terms': typeof TermsRoute
   '/toolkit': typeof ToolkitRoute
   '/unsubscribe': typeof UnsubscribeRoute
@@ -193,6 +200,7 @@ export interface FileRoutesByTo {
   '/newsletter': typeof NewsletterRoute
   '/privacy': typeof PrivacyRoute
   '/quotes': typeof QuotesRoute
+  '/rss.xml': typeof RssDotxmlRoute
   '/terms': typeof TermsRoute
   '/toolkit': typeof ToolkitRoute
   '/unsubscribe': typeof UnsubscribeRoute
@@ -220,6 +228,7 @@ export interface FileRoutesById {
   '/newsletter': typeof NewsletterRoute
   '/privacy': typeof PrivacyRoute
   '/quotes': typeof QuotesRoute
+  '/rss.xml': typeof RssDotxmlRoute
   '/terms': typeof TermsRoute
   '/toolkit': typeof ToolkitRoute
   '/unsubscribe': typeof UnsubscribeRoute
@@ -247,6 +256,7 @@ export interface FileRouteTypes {
     | '/newsletter'
     | '/privacy'
     | '/quotes'
+    | '/rss.xml'
     | '/terms'
     | '/toolkit'
     | '/unsubscribe'
@@ -272,6 +282,7 @@ export interface FileRouteTypes {
     | '/newsletter'
     | '/privacy'
     | '/quotes'
+    | '/rss.xml'
     | '/terms'
     | '/toolkit'
     | '/unsubscribe'
@@ -298,6 +309,7 @@ export interface FileRouteTypes {
     | '/newsletter'
     | '/privacy'
     | '/quotes'
+    | '/rss.xml'
     | '/terms'
     | '/toolkit'
     | '/unsubscribe'
@@ -325,6 +337,7 @@ export interface RootRouteChildren {
   NewsletterRoute: typeof NewsletterRoute
   PrivacyRoute: typeof PrivacyRoute
   QuotesRoute: typeof QuotesRoute
+  RssDotxmlRoute: typeof RssDotxmlRoute
   TermsRoute: typeof TermsRoute
   ToolkitRoute: typeof ToolkitRoute
   UnsubscribeRoute: typeof UnsubscribeRoute
@@ -428,6 +441,13 @@ declare module '@tanstack/react-router' {
       path: '/quotes'
       fullPath: '/quotes'
       preLoaderRoute: typeof QuotesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/rss.xml': {
+      id: '/rss.xml'
+      path: '/rss.xml'
+      fullPath: '/rss.xml'
+      preLoaderRoute: typeof RssDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/terms': {
@@ -535,6 +555,7 @@ const rootRouteChildren: RootRouteChildren = {
   NewsletterRoute: NewsletterRoute,
   PrivacyRoute: PrivacyRoute,
   QuotesRoute: QuotesRoute,
+  RssDotxmlRoute: RssDotxmlRoute,
   TermsRoute: TermsRoute,
   ToolkitRoute: ToolkitRoute,
   UnsubscribeRoute: UnsubscribeRoute,
