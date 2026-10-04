@@ -134,5 +134,8 @@ const robots = [
 ].join("\n");
 
 writeFileSync(join(OUT_DIR, "sitemap.xml"), `${sitemap}\n`);
+writeFileSync(join(OUT_DIR, "rss.xml"), `${rss}\n`);
 writeFileSync(join(OUT_DIR, "robots.txt"), robots);
-console.log(`Wrote ${entries.length} sitemap URLs and robots.txt to ${OUT_DIR}`);
+console.log(
+  `Wrote ${entries.length} sitemap URLs, ${rssItems.length} RSS items and robots.txt to ${OUT_DIR}`,
+);
