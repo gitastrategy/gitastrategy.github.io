@@ -49,13 +49,13 @@ async function liveItems(): Promise<FeedItem[]> {
     .order("published_at", { ascending: false, nullsFirst: false })
     .limit(LIMIT);
   if (error || !data) throw new Error("query failed");
-  return (data as Record<string, string | null>[]).map((r) => ({
-    slug: String(r.slug),
-    title: String(r.title),
-    summary: String(r.summary ?? ""),
-    category: String(r.category ?? ""),
-    date: String(r.date_label ?? ""),
-    publishedAt: r.published_at ?? null,
+  return (data as Array<Record<string, string | null>>).map((r) => ({
+    slug: r["slug"] ?? "",
+    title: r["title"] ?? "",
+    summary: r["summary"] ?? "",
+    category: r["category"] ?? "",
+    date: r["date_label"] ?? "",
+    publishedAt: r["published_at"] ?? null,
   }));
 }
 
