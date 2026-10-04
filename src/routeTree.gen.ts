@@ -29,6 +29,7 @@ import { Route as VersesRouteImport } from './routes/verses'
 import { Route as ApiKrishnaRouteImport } from './routes/api/krishna'
 import { Route as ArticlesIndexRouteImport } from './routes/articles.index'
 import { Route as ArticlesSlugRouteImport } from './routes/articles.$slug'
+import { Route as RssXmlRouteImport } from './routes/rss.xml'
 import { Route as AuthenticatedAdminSettingsRouteImport } from './routes/_authenticated/admin.settings'
 import { Route as ApiPublicArticlesRouteImport } from './routes/api/public/articles'
 import { Route as ApiPublicContactRouteImport } from './routes/api/public/contact'
@@ -133,6 +134,11 @@ const ArticlesSlugRoute = ArticlesSlugRouteImport.update({
   path: '/articles/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const RssXmlRoute = RssXmlRouteImport.update({
+  id: '/rss/xml',
+  path: '/rss/xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedAdminSettingsRoute =
   AuthenticatedAdminSettingsRouteImport.update({
     id: '/admin/settings',
@@ -174,6 +180,7 @@ export interface FileRoutesByFullPath {
   '/verses': typeof VersesRoute
   '/api/krishna': typeof ApiKrishnaRoute
   '/articles/$slug': typeof ArticlesSlugRoute
+  '/rss/xml': typeof RssXmlRoute
   '/articles/': typeof ArticlesIndexRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/api/public/articles': typeof ApiPublicArticlesRoute
@@ -199,6 +206,7 @@ export interface FileRoutesByTo {
   '/verses': typeof VersesRoute
   '/api/krishna': typeof ApiKrishnaRoute
   '/articles/$slug': typeof ArticlesSlugRoute
+  '/rss/xml': typeof RssXmlRoute
   '/articles': typeof ArticlesIndexRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/api/public/articles': typeof ApiPublicArticlesRoute
@@ -226,6 +234,7 @@ export interface FileRoutesById {
   '/verses': typeof VersesRoute
   '/api/krishna': typeof ApiKrishnaRoute
   '/articles/$slug': typeof ArticlesSlugRoute
+  '/rss/xml': typeof RssXmlRoute
   '/articles/': typeof ArticlesIndexRoute
   '/_authenticated/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/api/public/articles': typeof ApiPublicArticlesRoute
@@ -253,6 +262,7 @@ export interface FileRouteTypes {
     | '/verses'
     | '/api/krishna'
     | '/articles/$slug'
+    | '/rss/xml'
     | '/articles/'
     | '/admin/settings'
     | '/api/public/articles'
@@ -278,6 +288,7 @@ export interface FileRouteTypes {
     | '/verses'
     | '/api/krishna'
     | '/articles/$slug'
+    | '/rss/xml'
     | '/articles'
     | '/admin/settings'
     | '/api/public/articles'
@@ -304,6 +315,7 @@ export interface FileRouteTypes {
     | '/verses'
     | '/api/krishna'
     | '/articles/$slug'
+    | '/rss/xml'
     | '/articles/'
     | '/_authenticated/admin/settings'
     | '/api/public/articles'
@@ -331,6 +343,7 @@ export interface RootRouteChildren {
   VersesRoute: typeof VersesRoute
   ApiKrishnaRoute: typeof ApiKrishnaRoute
   ArticlesSlugRoute: typeof ArticlesSlugRoute
+  RssXmlRoute: typeof RssXmlRoute
   ArticlesIndexRoute: typeof ArticlesIndexRoute
   ApiPublicArticlesRoute: typeof ApiPublicArticlesRoute
   ApiPublicContactRoute: typeof ApiPublicContactRoute
@@ -479,6 +492,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ArticlesSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/rss/xml': {
+      id: '/rss/xml'
+      path: '/rss/xml'
+      fullPath: '/rss/xml'
+      preLoaderRoute: typeof RssXmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/admin/settings': {
       id: '/_authenticated/admin/settings'
       path: '/admin/settings'
@@ -541,6 +561,7 @@ const rootRouteChildren: RootRouteChildren = {
   VersesRoute: VersesRoute,
   ApiKrishnaRoute: ApiKrishnaRoute,
   ArticlesSlugRoute: ArticlesSlugRoute,
+  RssXmlRoute: RssXmlRoute,
   ArticlesIndexRoute: ArticlesIndexRoute,
   ApiPublicArticlesRoute: ApiPublicArticlesRoute,
   ApiPublicContactRoute: ApiPublicContactRoute,

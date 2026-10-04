@@ -121,7 +121,7 @@ async function render(): Promise<Response> {
   });
 }
 
-export const Route = createFileRoute("/rss.xml")({
+export const Route = createFileRoute("/rss/xml")({
   server: {
     handlers: {
       GET: () => render(),
