@@ -22,6 +22,7 @@ import { Route as LeadershipRouteImport } from './routes/leadership'
 import { Route as NewsletterRouteImport } from './routes/newsletter'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as QuotesRouteImport } from './routes/quotes'
+import { Route as RssDotxmlRouteImport } from './routes/rss[.]xml'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as ToolkitRouteImport } from './routes/toolkit'
 import { Route as UnsubscribeRouteImport } from './routes/unsubscribe'
@@ -29,7 +30,6 @@ import { Route as VersesRouteImport } from './routes/verses'
 import { Route as ApiKrishnaRouteImport } from './routes/api/krishna'
 import { Route as ArticlesIndexRouteImport } from './routes/articles.index'
 import { Route as ArticlesSlugRouteImport } from './routes/articles.$slug'
-import { Route as RssXmlRouteImport } from './routes/rss.xml'
 import { Route as AuthenticatedAdminSettingsRouteImport } from './routes/_authenticated/admin.settings'
 import { Route as ApiPublicArticlesRouteImport } from './routes/api/public/articles'
 import { Route as ApiPublicContactRouteImport } from './routes/api/public/contact'
@@ -99,6 +99,11 @@ const QuotesRoute = QuotesRouteImport.update({
   path: '/quotes',
   getParentRoute: () => rootRouteImport,
 } as any)
+const RssDotxmlRoute = RssDotxmlRouteImport.update({
+  id: '/rss.xml',
+  path: '/rss.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TermsRoute = TermsRouteImport.update({
   id: '/terms',
   path: '/terms',
@@ -132,11 +137,6 @@ const ArticlesIndexRoute = ArticlesIndexRouteImport.update({
 const ArticlesSlugRoute = ArticlesSlugRouteImport.update({
   id: '/articles/$slug',
   path: '/articles/$slug',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const RssXmlRoute = RssXmlRouteImport.update({
-  id: '/rss/xml',
-  path: '/rss/xml',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedAdminSettingsRoute =
@@ -174,13 +174,13 @@ export interface FileRoutesByFullPath {
   '/newsletter': typeof NewsletterRoute
   '/privacy': typeof PrivacyRoute
   '/quotes': typeof QuotesRoute
+  '/rss.xml': typeof RssDotxmlRoute
   '/terms': typeof TermsRoute
   '/toolkit': typeof ToolkitRoute
   '/unsubscribe': typeof UnsubscribeRoute
   '/verses': typeof VersesRoute
   '/api/krishna': typeof ApiKrishnaRoute
   '/articles/$slug': typeof ArticlesSlugRoute
-  '/rss/xml': typeof RssXmlRoute
   '/articles/': typeof ArticlesIndexRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/api/public/articles': typeof ApiPublicArticlesRoute
@@ -200,13 +200,13 @@ export interface FileRoutesByTo {
   '/newsletter': typeof NewsletterRoute
   '/privacy': typeof PrivacyRoute
   '/quotes': typeof QuotesRoute
+  '/rss.xml': typeof RssDotxmlRoute
   '/terms': typeof TermsRoute
   '/toolkit': typeof ToolkitRoute
   '/unsubscribe': typeof UnsubscribeRoute
   '/verses': typeof VersesRoute
   '/api/krishna': typeof ApiKrishnaRoute
   '/articles/$slug': typeof ArticlesSlugRoute
-  '/rss/xml': typeof RssXmlRoute
   '/articles': typeof ArticlesIndexRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/api/public/articles': typeof ApiPublicArticlesRoute
@@ -228,13 +228,13 @@ export interface FileRoutesById {
   '/newsletter': typeof NewsletterRoute
   '/privacy': typeof PrivacyRoute
   '/quotes': typeof QuotesRoute
+  '/rss.xml': typeof RssDotxmlRoute
   '/terms': typeof TermsRoute
   '/toolkit': typeof ToolkitRoute
   '/unsubscribe': typeof UnsubscribeRoute
   '/verses': typeof VersesRoute
   '/api/krishna': typeof ApiKrishnaRoute
   '/articles/$slug': typeof ArticlesSlugRoute
-  '/rss/xml': typeof RssXmlRoute
   '/articles/': typeof ArticlesIndexRoute
   '/_authenticated/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/api/public/articles': typeof ApiPublicArticlesRoute
@@ -256,13 +256,13 @@ export interface FileRouteTypes {
     | '/newsletter'
     | '/privacy'
     | '/quotes'
+    | '/rss.xml'
     | '/terms'
     | '/toolkit'
     | '/unsubscribe'
     | '/verses'
     | '/api/krishna'
     | '/articles/$slug'
-    | '/rss/xml'
     | '/articles/'
     | '/admin/settings'
     | '/api/public/articles'
@@ -282,13 +282,13 @@ export interface FileRouteTypes {
     | '/newsletter'
     | '/privacy'
     | '/quotes'
+    | '/rss.xml'
     | '/terms'
     | '/toolkit'
     | '/unsubscribe'
     | '/verses'
     | '/api/krishna'
     | '/articles/$slug'
-    | '/rss/xml'
     | '/articles'
     | '/admin/settings'
     | '/api/public/articles'
@@ -309,13 +309,13 @@ export interface FileRouteTypes {
     | '/newsletter'
     | '/privacy'
     | '/quotes'
+    | '/rss.xml'
     | '/terms'
     | '/toolkit'
     | '/unsubscribe'
     | '/verses'
     | '/api/krishna'
     | '/articles/$slug'
-    | '/rss/xml'
     | '/articles/'
     | '/_authenticated/admin/settings'
     | '/api/public/articles'
@@ -337,13 +337,13 @@ export interface RootRouteChildren {
   NewsletterRoute: typeof NewsletterRoute
   PrivacyRoute: typeof PrivacyRoute
   QuotesRoute: typeof QuotesRoute
+  RssDotxmlRoute: typeof RssDotxmlRoute
   TermsRoute: typeof TermsRoute
   ToolkitRoute: typeof ToolkitRoute
   UnsubscribeRoute: typeof UnsubscribeRoute
   VersesRoute: typeof VersesRoute
   ApiKrishnaRoute: typeof ApiKrishnaRoute
   ArticlesSlugRoute: typeof ArticlesSlugRoute
-  RssXmlRoute: typeof RssXmlRoute
   ArticlesIndexRoute: typeof ArticlesIndexRoute
   ApiPublicArticlesRoute: typeof ApiPublicArticlesRoute
   ApiPublicContactRoute: typeof ApiPublicContactRoute
@@ -443,6 +443,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof QuotesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/rss.xml': {
+      id: '/rss.xml'
+      path: '/rss.xml'
+      fullPath: '/rss.xml'
+      preLoaderRoute: typeof RssDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/terms': {
       id: '/terms'
       path: '/terms'
@@ -490,13 +497,6 @@ declare module '@tanstack/react-router' {
       path: '/articles/$slug'
       fullPath: '/articles/$slug'
       preLoaderRoute: typeof ArticlesSlugRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/rss/xml': {
-      id: '/rss/xml'
-      path: '/rss/xml'
-      fullPath: '/rss/xml'
-      preLoaderRoute: typeof RssXmlRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/admin/settings': {
@@ -555,13 +555,13 @@ const rootRouteChildren: RootRouteChildren = {
   NewsletterRoute: NewsletterRoute,
   PrivacyRoute: PrivacyRoute,
   QuotesRoute: QuotesRoute,
+  RssDotxmlRoute: RssDotxmlRoute,
   TermsRoute: TermsRoute,
   ToolkitRoute: ToolkitRoute,
   UnsubscribeRoute: UnsubscribeRoute,
   VersesRoute: VersesRoute,
   ApiKrishnaRoute: ApiKrishnaRoute,
   ArticlesSlugRoute: ArticlesSlugRoute,
-  RssXmlRoute: RssXmlRoute,
   ArticlesIndexRoute: ArticlesIndexRoute,
   ApiPublicArticlesRoute: ApiPublicArticlesRoute,
   ApiPublicContactRoute: ApiPublicContactRoute,
