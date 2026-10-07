@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { Menu, X, MessageCircle } from "lucide-react";
 import { SocialLinks } from "./SocialLinks";
+import { resources } from "../../data/profile";
 
 const nav = [
   { to: "/verses", label: "Verses" },
@@ -125,7 +126,7 @@ export function SiteHeader() {
 export function SiteFooter() {
   return (
     <footer className="surface-dusk mt-24">
-      <div className="mx-auto grid max-w-6xl gap-10 px-5 py-14 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="mx-auto grid max-w-6xl gap-10 px-5 py-14 sm:grid-cols-2 lg:grid-cols-5">
         <div>
           <h2 className="font-display text-2xl">Gita Strategy</h2>
           <p className="mt-3 text-sm opacity-75">
@@ -140,6 +141,23 @@ export function SiteFooter() {
                 <Link to={i.to} className="hover:underline hover:opacity-100">
                   {i.label}
                 </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+        <div>
+          <p className="eyebrow opacity-70">Sacred sources</p>
+          <ul className="mt-3 space-y-2 text-sm opacity-90">
+            {resources.map((r) => (
+              <li key={r.href}>
+                <a
+                  href={r.href}
+                  target="_blank"
+                  rel="noreferrer noopener"
+                  className="hover:underline hover:opacity-100"
+                >
+                  {r.label}
+                </a>
               </li>
             ))}
           </ul>
