@@ -10,6 +10,34 @@ export const profile = {
   location: "Mumbai, India – 421204",
 } as const;
 
+export const resources = [
+  {
+    label: "Gita Press",
+    href: "https://gitapress.org/",
+    description: "Publisher of the definitive Gita editions and Hindu scriptures.",
+  },
+  {
+    label: "Sri Jagannath Research & Bhakti",
+    href: "https://srjbtkshetra.org/",
+    description: "Research and devotion centred on Sri Jagannath and the Kshetra tradition.",
+  },
+  {
+    label: "Vedic Heritage Portal",
+    href: "https://vedicheritage.gov.in/",
+    description: "Government of India portal for Vedic manuscripts and heritage texts.",
+  },
+  {
+    label: "Central Sanskrit University",
+    href: "https://sanskrit.nic.in/",
+    description: "India's central university for Sanskrit learning and research.",
+  },
+  {
+    label: "Gita Supersite",
+    href: "https://www.gitasupersite.in/",
+    description: "IIT Kanpur's multilingual Gita portal with commentaries and audio.",
+  },
+] as const;
+
 export const socialLinks = [
   {
     label: "LinkedIn",

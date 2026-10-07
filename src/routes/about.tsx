@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { PageHeader, Section } from "../components/site/PageHeader";
 import { SocialLinks } from "../components/site/SocialLinks";
-import { profile } from "../data/profile";
+import { profile, resources } from "../data/profile";
 
 export const Route = createFileRoute("/about")({
   head: () => ({
@@ -75,6 +75,34 @@ function AboutPage() {
           <blockquote className="sanskrit rounded-xl border-l-2 border-accent bg-secondary p-8 text-xl text-primary">
             योगः कर्मसु कौशलम् — Yoga is skill in action.
           </blockquote>
+
+          <div>
+            <p className="eyebrow text-accent">Sacred sources</p>
+            <h2 className="mt-2 text-3xl font-semibold">Institutions we rely on</h2>
+            <p className="mt-4 leading-relaxed text-muted-foreground">
+              Our verse readings and translations are cross-checked against these
+              authoritative institutions and portals.
+            </p>
+            <ul className="mt-8 grid gap-4 sm:grid-cols-2">
+              {resources.map((r) => (
+                <li key={r.href}>
+                  <a
+                    href={r.href}
+                    target="_blank"
+                    rel="noreferrer noopener"
+                    className="group block h-full rounded-xl border border-border bg-card p-5 transition-transform hover:-translate-y-0.5"
+                  >
+                    <span className="font-semibold text-foreground group-hover:underline">
+                      {r.label}
+                    </span>
+                    <span className="mt-1 block text-sm leading-relaxed text-muted-foreground">
+                      {r.description}
+                    </span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
       </Section>
     </>
